@@ -8,6 +8,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc; 
 using System.Web;
+using System.Drawing;
 
 namespace WebApiDrDemoCS.Controllers
 {
@@ -17,18 +18,26 @@ namespace WebApiDrDemoCS.Controllers
         {
             using (productdbseaEntities ent = new productdbseaEntities())
             {
-                //string serverName;
-                //try
-                //{
-                //    serverName = System.Environment.MachineName;
-                //}
-                //catch (Exception)
-                //{
-                //    serverName = string.Empty;
-                //}
+                string serverName, regionName; 
+                serverName = System.Environment.MachineName;
+                regionName = System.Environment.GetEnvironmentVariable("REGION_NAME");
+
+                //temporary hardcode until we find a way to programmatically get region
+                HttpContext.Current.Response.Headers.Add("Server-Name", serverName);
+                HttpContext.Current.Response.Headers.Add("Region-Name", regionName);
+
+
+                var orders = ent.Orders.ToList();
+                int count = 0;
+                if(orders != null)
+                {
+                    count = orders.Count;
+                }
+                HttpContext.Current.Response.Headers.Add("Total-Records", count.ToString());
+
                 
-                HttpContext.Current.Response.Headers.Add("Server-Name", System.Environment.MachineName); 
-                return ent.Orders.ToList();
+
+                return orders;
             }
         }
 
