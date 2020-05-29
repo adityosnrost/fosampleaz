@@ -8,24 +8,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http;
-using System.Net.Http.Headers; 
-using Microsoft.Azure.WebJobs.Host;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using System.Net;
 using RestSharp;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 
 namespace FunctionAppFailover
 {
-    public static class InvokeFailover
+    public static class GetFailoverGroup
     {
-        static RestClient client = null; 
+
+        static RestClient clientRest = null;
 
         private static string GetBearerToken(ConfigWrapper config)
         {
-            client = new RestClient("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token");
-            client.Timeout = -1;
+            clientRest = new RestClient("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token");
+            clientRest.Timeout = -1;
             var request = new RestRequest(Method.POST);
             request.AddHeader("Cookie", "stsservicecookie=estsfd; fpc=AlsSOR2lIsxOqFLubHOBxlufnQOrAQAAAHB6VdYOAAAA; x-ms-gateway-slice=estsfd");
             request.AlwaysMultipartFormData = true;
@@ -33,9 +32,9 @@ namespace FunctionAppFailover
             request.AddParameter("client_id", config.ClientId);
             request.AddParameter("client_secret", config.ClientSecret);
             request.AddParameter("resource", config.Resource);
-            IRestResponse response = client.Execute(request);
-            Console.WriteLine(response.Content);
+            IRestResponse response = clientRest.Execute(request);
             dynamic jo = JsonConvert.DeserializeObject(response.Content);
+            Console.WriteLine(response.Content);
             string token = jo.access_token.Value;
             if (!string.IsNullOrEmpty(token))
                 return token;
@@ -43,27 +42,38 @@ namespace FunctionAppFailover
                 return null;
         }
 
-        private static async Task<string> TriggerFailover(string token, string name)
+        private static async Task<string> GetResourceGroupAsync(string token)
         {
-            var client2 = new HttpClient();
-
-            if (name == "eastus")
-            {
-                client2.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup/failover?api-version=2015-05-01-preview");
-            }
-            else
-            {
-                client2.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup/failover?api-version=2015-05-01-preview");
-            }
-
-            var request = new HttpRequestMessage(HttpMethod.Post, "");
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourcegroups?api-version=2017-05-10");
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
             request.Headers.Add("Authorization", "Bearer " + token);
-            var response = await client2.SendAsync(request);
+            var response = await client.SendAsync(request);
 
             return response.Content.ReadAsStringAsync().Result.ToString();
         }
 
-        [FunctionName("InvokeFailover")]
+        private static async Task<string> GetFailoverGroupAsync(string token, string name)
+        {
+            var client = new HttpClient();
+            
+            if(name == "eastus")
+            {
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+            }
+            else
+            {
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            request.Headers.Add("Authorization", "Bearer " + token);
+            var response = await client.SendAsync(request);
+
+            return response.Content.ReadAsStringAsync().Result.ToString();
+        }
+
+        [FunctionName("GetFailoverGroup")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
@@ -83,14 +93,14 @@ namespace FunctionAppFailover
                 .Build());
 
             string name = req.Query["serverName"].ToString().ToLower();
-            if (name == null)
+            if(name == null)
             {
                 name = "southeastasia";
             }
 
             string token = GetBearerToken(config);
 
-            string rgResult = await TriggerFailover(token, name);
+            string rgResult = await GetFailoverGroupAsync(token, name);
 
             return new OkObjectResult(rgResult);
         }
