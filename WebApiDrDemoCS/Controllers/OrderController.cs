@@ -20,10 +20,8 @@ namespace WebApiDrDemoCS.Controllers
             {
                 string serverName, regionName; 
                 serverName = System.Environment.MachineName;
-                regionName = System.Environment.GetEnvironmentVariable("REGION_NAME");
-
-                //temporary hardcode until we find a way to programmatically get region
-                HttpContext.Current.Response.Headers.Add("Server-Name", serverName);
+                regionName = System.Environment.GetEnvironmentVariable("REGION_NAME"); 
+                 
                 HttpContext.Current.Response.Headers.Add("Region-Name", regionName);
 
 
