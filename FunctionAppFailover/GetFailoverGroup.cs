@@ -42,10 +42,10 @@ namespace FunctionAppFailover
                 return null;
         }
 
-        private static async Task<string> GetResourceGroupAsync(string token)
+        private static async Task<string> GetResourceGroupAsync(string token, ConfigWrapper config)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourcegroups?api-version=2017-05-10");
+            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourcegroups?api-version=2017-05-10");
             var request = new HttpRequestMessage(HttpMethod.Get, "");
             request.Headers.Add("Authorization", "Bearer " + token);
             var response = await client.SendAsync(request);
@@ -53,17 +53,17 @@ namespace FunctionAppFailover
             return response.Content.ReadAsStringAsync().Result.ToString();
         }
 
-        private static async Task<string> GetFailoverGroupAsync(string token, string name)
+        private static async Task<string> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
         {
             var client = new HttpClient();
             
             if(name == "eastus")
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
             }
             else
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -100,7 +100,7 @@ namespace FunctionAppFailover
 
             string token = GetBearerToken(config);
 
-            string rgResult = await GetFailoverGroupAsync(token, name);
+            string rgResult = await GetFailoverGroupAsync(token, name, config);
 
             return new OkObjectResult(rgResult);
         }
