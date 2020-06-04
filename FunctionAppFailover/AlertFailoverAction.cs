@@ -23,6 +23,53 @@ namespace FunctionAppFailover
 {
     public static class AlertFailoverAction
     {
+        static RestClient clientRest = null;
+
+        private static string GetBearerToken(ConfigWrapper config)
+        {
+            clientRest = new RestClient("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token");
+            clientRest.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Cookie", "stsservicecookie=estsfd; fpc=AlsSOR2lIsxOqFLubHOBxlufnQOrAQAAAHB6VdYOAAAA; x-ms-gateway-slice=estsfd");
+            request.AlwaysMultipartFormData = true;
+            request.AddParameter("grant_type", config.GrantType);
+            request.AddParameter("client_id", config.ClientId);
+            request.AddParameter("client_secret", config.ClientSecret);
+            request.AddParameter("resource", config.Resource);
+            IRestResponse response = clientRest.Execute(request);
+            dynamic jo = JsonConvert.DeserializeObject(response.Content);
+            Console.WriteLine(response.Content);
+            string token = jo.access_token.Value;
+            if (!string.IsNullOrEmpty(token))
+                return token;
+            else
+                return null;
+        }
+
+        private static async Task<string> GetFailoverGroupAsync(string token, string name)
+        {
+            var client = new HttpClient();
+
+            if (name == "eastus")
+            {
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+            }
+            else
+            {
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            request.Headers.Add("Authorization", "Bearer " + token);
+            var response = await client.SendAsync(request);
+
+            dynamic responseContent = await response.Content.ReadAsAsync<object>();
+
+            return responseContent.properties.replicationRole;
+        }
+
+
+
         private static async Task<string> TriggerFailover()
         {
             var client2 = new HttpClient();
@@ -60,19 +107,32 @@ namespace FunctionAppFailover
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build());
+
+
+            string token = GetBearerToken(config);
+            string name = "eastus";
+            string rgResult = await GetFailoverGroupAsync(token, name);
             string actionResult;
-            string failoverActionType = System.Environment.GetEnvironmentVariable("FullAutomatedFailover", EnvironmentVariableTarget.Process);
-            if (failoverActionType == "1")
+
+            if (rgResult != "Primary")
             {
-                actionResult = await TriggerFailover();
-            }
-            else if(failoverActionType == "0")
-            {
-                actionResult = await TriggerSendEmail();
+                string failoverActionType = System.Environment.GetEnvironmentVariable("FullAutomatedFailover", EnvironmentVariableTarget.Process);
+                if (failoverActionType == "1")
+                {
+                    actionResult = await TriggerFailover();
+                }
+                else if (failoverActionType == "0")
+                {
+                    actionResult = await TriggerSendEmail();
+                }
+                else
+                {
+                    actionResult = "No action needed";
+                }
             }
             else
             {
-                actionResult = "No action needed";
+                actionResult = "No action needed, failover successfully done";
             }
 
             return new OkObjectResult(actionResult);
