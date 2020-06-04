@@ -14,18 +14,23 @@ namespace WebApiDrDemoCS.Controllers
 {
     public class OrderController : ApiController
     {
-        public IEnumerable<Order> GetOrders()
+        //public IEnumerable<Order> GetAllOrders()
+        //{
+        //    return GetOrders();
+        //}
+        public IEnumerable<Order> GetAllOrders()
         {
             using (productdbseaEntities ent = new productdbseaEntities())
             {
-                string serverName, regionName; 
-                serverName = System.Environment.MachineName;
-                regionName = System.Environment.GetEnvironmentVariable("REGION_NAME");
+                string regionName;  
+                regionName = System.Environment.GetEnvironmentVariable("REGION_NAME"); 
+                if(regionName != null)
+                    HttpContext.Current.Response.Headers.Add("Web-Region-Name", regionName);
 
-                //temporary hardcode until we find a way to programmatically get region
-                HttpContext.Current.Response.Headers.Add("Server-Name", serverName);
-                HttpContext.Current.Response.Headers.Add("Region-Name", regionName);
 
+                string sqlServerName = ent.Database.SqlQuery<string>("SELECT @@SERVERNAME").FirstOrDefault();
+                if (sqlServerName != null)
+                    HttpContext.Current.Response.Headers.Add("DB-Server-Name", sqlServerName);
 
                 var orders = ent.Orders.ToList();
                 int count = 0;
@@ -33,9 +38,7 @@ namespace WebApiDrDemoCS.Controllers
                 {
                     count = orders.Count;
                 }
-                HttpContext.Current.Response.Headers.Add("Total-Records", count.ToString());
-
-                
+                HttpContext.Current.Response.Headers.Add("Total-Records", count.ToString()); 
 
                 return orders;
             }
@@ -45,29 +48,20 @@ namespace WebApiDrDemoCS.Controllers
         {
             int num_letters = 4;
             int num_words = 4;
-            StringBuilder lstWords = new StringBuilder();
-            // Make an array of the letters we will use.
+            StringBuilder lstWords = new StringBuilder(); 
             char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-
-            // Make a random number generator.
+             
             Random rand = new Random();
-
-            // Make the words.
+             
             for (int i = 1; i <= num_words; i++)
-            {
-                // Make a word.
+            { 
                 string word = "";
                 for (int j = 1; j <= num_letters; j++)
-                {
-                    // Pick a random number between 0 and 25
-                    // to select a letter from the letters array.
-                    int letter_num = rand.Next(0, letters.Length - 1);
-
-                    // Append the letter.
+                { 
+                    int letter_num = rand.Next(0, letters.Length - 1); 
                     word += letters[letter_num];
                 }
-
-                // Add the word to the list.
+                 
                 lstWords.Append(word);
             }
 
@@ -84,6 +78,7 @@ namespace WebApiDrDemoCS.Controllers
         }
         public HttpResponseMessage Add(string productCode, int quantity)
         {
+            string sqlServerName = null;
             using (productdbseaEntities ent = new productdbseaEntities())
             {
                 Order order = new Order()
@@ -94,8 +89,22 @@ namespace WebApiDrDemoCS.Controllers
                 };
                 ent.Orders.Add(order);
                 ent.SaveChanges();
+
+                sqlServerName = ent.Database.SqlQuery<string>("SELECT @@SERVERNAME").FirstOrDefault();
             }
-            return new HttpResponseMessage() { StatusCode = HttpStatusCode.Created };
+
+            string regionName;
+            regionName = System.Environment.GetEnvironmentVariable("REGION_NAME");  
+              
+            HttpResponseMessage resp = new HttpResponseMessage();
+            resp.StatusCode = HttpStatusCode.Created;
+            if (regionName != null)
+                resp.Headers.Add("Web-Region-Name", regionName);
+            if (sqlServerName != null)
+                resp.Headers.Add("DB-Server-Name", sqlServerName);
+
+
+            return resp;
         }
     }
 }
