@@ -38,5 +38,35 @@ namespace FunctionAppFailover
         {
             get { return _config["SubscriptionId"]; }
         }
+
+        public string OriginEmailServer
+        {
+            get { return _config["OriginEmailServer"]; }
+        }
+
+        public string OriginEmailServerPort
+        {
+            get { return _config["OriginEmailServerPort"]; }
+        }
+
+        public string OriginEmailAddress
+        {
+            get { return _config["OriginEmailAddress"]; }
+        }
+
+        public string OriginEmailPassword
+        {
+            get { return _config["OriginEmailPassword"]; }
+        }
+
+        public string TargetEmailAddress
+        {
+            get { return _config["TargetEmailAddress"]; }
+        }
+
+        public string SendGridKey
+        {
+            get { return _config["SendGridKey"]; }
+        }
     }
 }
