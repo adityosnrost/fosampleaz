@@ -23,10 +23,9 @@ namespace FunctionAppFailover
 
         private static string GetBearerToken(ConfigWrapper config)
         {
-            clientRest = new RestClient("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token");
+            clientRest = new RestClient("https://login.microsoftonline.com/" + config.TenantId + "/oauth2/token");
             clientRest.Timeout = -1;
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Cookie", "stsservicecookie=estsfd; fpc=AlsSOR2lIsxOqFLubHOBxlufnQOrAQAAAHB6VdYOAAAA; x-ms-gateway-slice=estsfd");
             request.AlwaysMultipartFormData = true;
             request.AddParameter("grant_type", config.GrantType);
             request.AddParameter("client_id", config.ClientId);
@@ -56,14 +55,13 @@ namespace FunctionAppFailover
         private static async Task<string> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
         {
             var client = new HttpClient();
-            
-            if(name == "eastus")
+            if (name == config.TargetServerRegion)
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/"+config.SubscriptionId+"/resourceGroups/"+config.SecondaryResourceGroupName+"/providers/Microsoft.Sql/servers/"+config.SecondaryDBServerName+"/failoverGroups/"+config.DBName+"?api-version=2015-05-01-preview");
             }
             else
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/"+config.SubscriptionId+"/resourceGroups/"+config.PrimaryResourceGroupName+"/providers/Microsoft.Sql/servers/"+config.PrimaryDBServerName+"/failoverGroups/"+config.DBName+"?api-version=2015-05-01-preview");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -95,7 +93,7 @@ namespace FunctionAppFailover
             string name = req.Query["serverName"].ToString().ToLower();
             if(name == null)
             {
-                name = "southeastasia";
+                name = config.OriginServerRegion;
             }
 
             string token = GetBearerToken(config);

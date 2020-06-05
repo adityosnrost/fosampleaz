@@ -27,10 +27,9 @@ namespace FunctionAppFailover
 
         private static string GetBearerToken(ConfigWrapper config)
         {
-            clientRest = new RestClient("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token");
+            clientRest = new RestClient("https://login.microsoftonline.com/" + config.TenantId + "/oauth2/token");
             clientRest.Timeout = -1;
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Cookie", "stsservicecookie=estsfd; fpc=AlsSOR2lIsxOqFLubHOBxlufnQOrAQAAAHB6VdYOAAAA; x-ms-gateway-slice=estsfd");
             request.AlwaysMultipartFormData = true;
             request.AddParameter("grant_type", config.GrantType);
             request.AddParameter("client_id", config.ClientId);
@@ -49,14 +48,13 @@ namespace FunctionAppFailover
         private static async Task<string> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
         {
             var client = new HttpClient();
-
-            if (name == "eastus")
+            if (name == config.TargetServerRegion)
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/rgDrDemoEUS/providers/Microsoft.Sql/servers/productservereus/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.SecondaryResourceGroupName + "/providers/Microsoft.Sql/servers/" + config.SecondaryDBServerName + "/failoverGroups/" + config.DBName + "?api-version=2015-05-01-preview");
             }
             else
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/failoverGroups/productdbgroup?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.PrimaryResourceGroupName + "/providers/Microsoft.Sql/servers/" + config.PrimaryDBServerName + "/failoverGroups/" + config.DBName + "?api-version=2015-05-01-preview");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -68,21 +66,19 @@ namespace FunctionAppFailover
             return responseContent.properties.replicationRole;
         }
 
-
-
-        private static async Task<string> TriggerFailover()
+        private static async Task<string> TriggerFailover(ConfigWrapper config)
         {
             var client2 = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://failoverfunc.azurewebsites.net/api/InvokeFailover?code=9IUbzLP/NP6lituqDOILOWa9/N1IH2b9n3M1QUn9OWaIFmwII/8LIg==");
+            var request = new HttpRequestMessage(HttpMethod.Post, config.InvokeFailoverFunctionURL);
             var response = await client2.SendAsync(request);
 
             return response.Content.ReadAsStringAsync().Result.ToString();
         }
 
-        private static async Task<string> TriggerSendEmail()
+        private static async Task<string> TriggerSendEmail(ConfigWrapper config)
         {
             var client2 = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://failoverfunc.azurewebsites.net/api/SendEmail?code=XRuAhdRIBDaLHi8mo15EFRx4AqTIJ89N0GpMnEt7cgP9af3wfcVRmA==");
+            var request = new HttpRequestMessage(HttpMethod.Post, config.SendEmailFunctionURL);
             var response = await client2.SendAsync(request);
 
             return response.Content.ReadAsStringAsync().Result.ToString();
@@ -108,22 +104,21 @@ namespace FunctionAppFailover
                 .AddEnvironmentVariables()
                 .Build());
 
-
             string token = GetBearerToken(config);
-            string name = "eastus";
+            string name = config.TargetServerRegion;
             string rgResult = await GetFailoverGroupAsync(token, name, config);
             string actionResult;
 
             if (rgResult != "Primary")
             {
-                string failoverActionType = System.Environment.GetEnvironmentVariable("FullAutomatedFailover", EnvironmentVariableTarget.Process);
+                string failoverActionType = System.Environment.GetEnvironmentVariable(config.EnvironmentTriggerFailoverVariable, EnvironmentVariableTarget.Process);
                 if (failoverActionType == "1")
                 {
-                    actionResult = await TriggerFailover();
+                    actionResult = await TriggerFailover(config);
                 }
                 else if (failoverActionType == "0")
                 {
-                    actionResult = await TriggerSendEmail();
+                    actionResult = await TriggerSendEmail(config);
                 }
                 else
                 {

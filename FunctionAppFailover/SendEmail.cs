@@ -48,13 +48,13 @@ namespace FunctionAppFailover
             var from = new EmailAddress(config.OriginEmailAddress, "Alert Admin");
             List<EmailAddress> tos = new List<EmailAddress>
             {
-                new EmailAddress(config.TargetEmailAddress, "System Administrator"),
+                new EmailAddress(config.TargetEmailAddress, "System Administrator")
             };
-
             var subject = "System down: Failover need to be approved";
-            var htmlContent = "<b>The Traffic Manager detected failure on the Web frontend [web sea name] on "+ DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss") + ", " +
-                "as such we are failing over to [east us endpoint]. Click the following link to initiate a database failover: " +
-                "<a href='failoverfunc.azurewebsites.net/api/InvokeFailover?code=9IUbzLP/NP6lituqDOILOWa9/N1IH2b9n3M1QUn9OWaIFmwII/8LIg=='>Start Failover</a></b>";
+            var htmlContent = "<p>The Traffic Manager detected failure on the Web frontend " + config.PrimaryWebName + " on "+ DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss") + ", (UTC Time)" +
+                "as such we are failing over to " + config.SecondaryWebName + ". Copy following URL into your browser to invoke the failover: " +
+                "</p>" +
+                "<p><b>" + config.FailoverFunctionURL + "</b></p>";
             var displayRecipients = false; // set this to true if you want recipients to see each others mail id 
             var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, subject, "", htmlContent, false);
             var response = await client.SendEmailAsync(msg);
