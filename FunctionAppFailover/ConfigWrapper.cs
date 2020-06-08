@@ -74,6 +74,11 @@ namespace FunctionAppFailover
             get { return _config["SendEmailFunctionURL"]; }
         }
 
+        public string SendEmailLogicURL
+        {
+            get { return _config["SendEmailLogicURL"]; }
+        }
+
         public string InvokeFailoverFunctionURL
         {
             get { return _config["InvokeFailoverFunctionURL"]; }

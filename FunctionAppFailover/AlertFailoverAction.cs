@@ -77,11 +77,19 @@ namespace FunctionAppFailover
 
         private static async Task<string> TriggerSendEmail(ConfigWrapper config)
         {
-            var client2 = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, config.SendEmailFunctionURL);
-            var response = await client2.SendAsync(request);
+            var postBody = (dynamic)new JsonObject();
+            postBody.FailoverFunctionURL = config.FailoverFunctionURL;
+            postBody.PrimaryWebName = config.PrimaryWebName;
+            postBody.SecondaryWebName = config.SecondaryWebName;
 
-            return response.Content.ReadAsStringAsync().Result.ToString();
+            var client2 = new HttpClient();
+            var content = new StringContent(postBody.ToString(), Encoding.UTF8, "application/json");
+            var result = await client2.PostAsync(config.SendEmailLogicURL, content);
+
+            //var request = new HttpRequestMessage(HttpMethod.Post, config.SendEmailLogicURL);
+            //var response = await client2.SendAsync(request);
+
+            return result.Content.ReadAsStringAsync().Result.ToString();
         }
 
 
@@ -96,7 +104,6 @@ namespace FunctionAppFailover
             {
                 currentDirectory = Directory.GetCurrentDirectory();
             }
-
 
             ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
                 .SetBasePath(currentDirectory)
