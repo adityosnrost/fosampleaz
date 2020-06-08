@@ -78,7 +78,7 @@ namespace FunctionAppFailover
         private static async Task<string> TriggerSendEmail(ConfigWrapper config)
         {
             var postBody = (dynamic)new JsonObject();
-            postBody.FailoverFunctionURL = config.FailoverFunctionURL;
+            postBody.FailoverFunctionURL = config.InvokeFailoverFunctionURL;
             postBody.PrimaryWebName = config.PrimaryWebName;
             postBody.SecondaryWebName = config.SecondaryWebName;
 
@@ -89,7 +89,30 @@ namespace FunctionAppFailover
             //var request = new HttpRequestMessage(HttpMethod.Post, config.SendEmailLogicURL);
             //var response = await client2.SendAsync(request);
 
-            return result.Content.ReadAsStringAsync().Result.ToString();
+            return "Email has sent successfully";
+        }
+
+        private static async Task<bool> GetEmailInvocationInterval(string token, ConfigWrapper config)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.SecondaryResourceGroupName + "/providers/Microsoft.Logic/workflows/" + config.WorkflowName + "/runs?api-version=2016-06-01&$top=1&$filter=startTime ge " + DateTime.UtcNow.AddMinutes(-int.Parse(config.InvokeInterval)).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"));
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            request.Headers.Add("Authorization", "Bearer " + token);
+            var response = await client.SendAsync(request);
+
+            dynamic responseContent = await response.Content.ReadAsAsync<object>();
+            JArray rowsResult = responseContent.value;
+
+            if(rowsResult.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
 
@@ -118,18 +141,20 @@ namespace FunctionAppFailover
 
             if (rgResult != "Primary")
             {
+                bool isEmailInterval = await GetEmailInvocationInterval(token, config);
+
                 string failoverActionType = System.Environment.GetEnvironmentVariable(config.EnvironmentTriggerFailoverVariable, EnvironmentVariableTarget.Process);
                 if (failoverActionType == "1")
                 {
                     actionResult = await TriggerFailover(config);
                 }
-                else if (failoverActionType == "0")
+                else if (failoverActionType == "0" && isEmailInterval == false)
                 {
                     actionResult = await TriggerSendEmail(config);
                 }
                 else
                 {
-                    actionResult = "No action needed";
+                    actionResult = "No action needed, either email already sent with in interval or failover is done";
                 }
             }
             else

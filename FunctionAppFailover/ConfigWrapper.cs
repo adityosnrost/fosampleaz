@@ -94,11 +94,6 @@ namespace FunctionAppFailover
             get { return _config["SecondaryWebName"]; }
         }
 
-        public string FailoverFunctionURL
-        {
-            get { return _config["FailoverFunctionURL"]; }
-        }
-
         public string PrimaryResourceGroupName
         {
             get { return _config["PrimaryResourceGroupName"]; }
@@ -127,6 +122,16 @@ namespace FunctionAppFailover
         public string EnvironmentTriggerFailoverVariable
         {
             get { return _config["EnvironmentTriggerFailoverVariable"]; }
+        }
+
+        public string InvokeInterval
+        {
+            get { return _config["InvokeInterval"]; }
+        }
+
+        public string WorkflowName
+        {
+            get { return _config["WorkflowName"]; }
         }
     }
 }

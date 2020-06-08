@@ -60,9 +60,9 @@ namespace FunctionAppFailover
             var subject = "System down: Database Failover need to be approved";
             var htmlContent = "<p>The Traffic Manager detected failure on the Web frontend <strong>" + config.PrimaryWebName + "</strong> on "+ DateTime.Now.ToString("yyyy-MMM-dd HH:mm:ss") + ", (UTC Time)." +
                 " As such we are failing over to <strong>" + config.SecondaryWebName + "</strong> automatically. " +
-                "<br /> Please click the <a href="+config.FailoverFunctionURL+ ">following link</a> to initiave the <strong>database failover</strong>. Alternatively, you may copy following URL into your browser: " +
+                "<br /> Please click the <a href="+config.InvokeFailoverFunctionURL+ ">following link</a> to initiave the <strong>database failover</strong>. Alternatively, you may copy following URL into your browser: " +
                 "</p>" +
-                "<p><b>" + config.FailoverFunctionURL + "</b></p>";
+                "<p><b>" + config.InvokeFailoverFunctionURL + "</b></p>";
             
             //var displayRecipients = false; // set this to true if you want recipients to see each others mail id 
             var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, subject, "", htmlContent, false);
