@@ -19,6 +19,7 @@ using MimeKit;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FunctionAppFailover
 {
@@ -46,20 +47,28 @@ namespace FunctionAppFailover
             var apiKey = config.SendGridKey;
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(config.OriginEmailAddress, "Alert Admin");
-            List<EmailAddress> tos = new List<EmailAddress>
+
+            List<EmailAddress> tos = new List<EmailAddress>();
+            List<string> toEmails = new List<string>();
+
+            toEmails = config.TargetEmailAddress.Split(';').ToList();
+            foreach (var toEmail in toEmails)
             {
-                new EmailAddress(config.TargetEmailAddress, "System Administrator")
-            };
-            var subject = "System down: Failover need to be approved";
-            var htmlContent = "<p>The Traffic Manager detected failure on the Web frontend " + config.PrimaryWebName + " on "+ DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss") + ", (UTC Time)" +
-                "as such we are failing over to " + config.SecondaryWebName + ". Copy following URL into your browser to invoke the failover: " +
+                tos.Add(new EmailAddress(toEmail.Trim()));
+            }
+            
+            var subject = "System down: Database Failover need to be approved";
+            var htmlContent = "<p>The Traffic Manager detected failure on the Web frontend <strong>" + config.PrimaryWebName + "</strong> on "+ DateTime.Now.ToString("yyyy-MMM-dd HH:mm:ss") + ", (UTC Time)." +
+                " As such we are failing over to <strong>" + config.SecondaryWebName + "</strong> automatically. " +
+                "<br /> Please click the <a href="+config.FailoverFunctionURL+ ">following link</a> to initiave the <strong>database failover</strong>. Alternatively, you may copy following URL into your browser: " +
                 "</p>" +
                 "<p><b>" + config.FailoverFunctionURL + "</b></p>";
-            var displayRecipients = false; // set this to true if you want recipients to see each others mail id 
+            
+            //var displayRecipients = false; // set this to true if you want recipients to see each others mail id 
             var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, subject, "", htmlContent, false);
             var response = await client.SendEmailAsync(msg);
 
-            return new OkObjectResult("Enail is successfully sent");
+            return new OkObjectResult("Email has been successfully sent.");
         }
     }
 }
