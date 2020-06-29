@@ -649,6 +649,7 @@
             "PrimaryDBServerName": "[parameters('sqlServerPrimaryName')]",
             "SecondaryDBServerName": "[parameters('sqlServerSecondaryName')]",
             "DBName": "[parameters('sqlDatabaseName')]",
+            "FailovergroupName": "[parameters('sqlFailoverGroupName')]",
             "WorkflowName": "[parameters('workflows_failoverflow_name')]",
             "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
