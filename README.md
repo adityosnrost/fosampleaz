@@ -28,7 +28,7 @@ Please go through this link tutorial to get required information to be added lat
 
 Add information that we got from ealier step into your appsettings.json files on FunctionAppFailover folder. We need this to be setup, so our application can access resources at Azure
 
-### 3. Deploy Based Instances
+### 3. Deploy Instances
 
 At this step, we are deploying all required instance by using one unify deployment template.
 
