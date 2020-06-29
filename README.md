@@ -35,18 +35,18 @@ At this step, we are deploying these instances:
 
 Click below button to automatically deploy your instances using Azure ARM Template:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-v3-dotnet-core-functions-integration%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2Fazuredeploypart1.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
 You can check the web project here ([Dotnet Sample Project](https://github.com/adityosnrost/fosampleaz/tree/master/WebApiDrDemoCS)).
 
-### 3. Deploy final Instances and manage your email account on Logic App
+### 4. Deploy final Instances and manage your email account on Logic App
 
 After we have apps and database instances, we need to add Streaming Analytics to finalized our end to end auto failover for this project.
 Why Streaming Analytics is seperated from template in step 3? There are some limitation on function listkey to get our functions app listkey added into Streaming Analytics. Functions need to be fully deployed with source control to finished.
 
 Click below button to automatically deploy your instances using Azure ARM Template:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-v3-dotnet-core-functions-integration%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2Fazuredeploypart2.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
 After deployment is successful, then we config logic app office 365 connectors. Open your Azure portal, go to Logic App deployment. Click on app designer and manage the office 365 connector to use your email domain.
 
