@@ -39,7 +39,7 @@ Click below button to automatically deploy your instances using Azure ARM Templa
 
 You can check the web project here ([Dotnet Sample Project](https://github.com/adityosnrost/fosampleaz/tree/master/WebApiDrDemoCS)).
 
-### 3. Deploy final Instances and manage your email account on Logic App
+### 4. Deploy final Instances and manage your email account on Logic App
 
 After we have apps and database instances, we need to add Streaming Analytics to finalized our end to end auto failover for this project.
 Why Streaming Analytics is seperated from template in step 3? There are some limitation on function listkey to get our functions app listkey added into Streaming Analytics. Functions need to be fully deployed with source control to finished.
