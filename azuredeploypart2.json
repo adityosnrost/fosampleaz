@@ -148,6 +148,7 @@
         "sku": {
           "name": "Standard"
         },
+        "outputStartMode": "JobStartTime",
         "eventsOutOfOrderPolicy": "Adjust",
         "outputErrorPolicy": "Stop",
         "eventsOutOfOrderMaxDelayInSeconds": 0,
