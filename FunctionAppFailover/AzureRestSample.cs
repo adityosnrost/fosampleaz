@@ -74,9 +74,9 @@ namespace FunctionAppFailover
 
             string token = GetBearerToken(config);
 
-            string rgResult = await GetResourceGroupAsync(token, config);
+            //string rgResult = await GetResourceGroupAsync(token, config);
 
-            return new OkObjectResult(rgResult);
+            return new OkObjectResult("OKE");
         }
     }
 }
