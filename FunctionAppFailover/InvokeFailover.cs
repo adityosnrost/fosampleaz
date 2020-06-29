@@ -47,13 +47,13 @@ namespace FunctionAppFailover
         private static async Task<string> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
         {
             var client = new HttpClient();
-            if (name == config.TargetServerRegion)
+            if (name == Environment.GetEnvironmentVariable("TargetServerRegion"))
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.SecondaryResourceGroupName + "/providers/Microsoft.Sql/servers/" + config.SecondaryDBServerName + "/failoverGroups/" + config.DBName + "?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Sql/servers/" + Environment.GetEnvironmentVariable("SecondaryDBServerName") + "/failoverGroups/" + Environment.GetEnvironmentVariable("DBName") + "?api-version=2015-05-01-preview");
             }
             else
             {
-                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.PrimaryResourceGroupName + "/providers/Microsoft.Sql/servers/" + config.PrimaryDBServerName + "/failoverGroups/" + config.DBName + "?api-version=2015-05-01-preview");
+                client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Sql/servers/" + Environment.GetEnvironmentVariable("PrimaryDBServerName") + "/failoverGroups/" + Environment.GetEnvironmentVariable("DBName") + "?api-version=2015-05-01-preview");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -66,13 +66,13 @@ namespace FunctionAppFailover
         private static async Task<string> TriggerFailover(string token, string name, ConfigWrapper config)
         {
             var client2 = new HttpClient();
-            if (name == config.TargetServerRegion)
+            if (name == Environment.GetEnvironmentVariable("TargetServerRegion"))
             {
-                client2.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.SecondaryResourceGroupName + "/providers/Microsoft.Sql/servers/" + config.SecondaryDBServerName + "/failoverGroups/" + config.DBName + "/failover?api-version=2015-05-01-preview");
+                client2.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Sql/servers/" + Environment.GetEnvironmentVariable("SecondaryDBServerName") + "/failoverGroups/" + Environment.GetEnvironmentVariable("DBName") + "/failover?api-version=2015-05-01-preview");
             }
             else
             {
-                client2.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.PrimaryResourceGroupName + "/providers/Microsoft.Sql/servers/" + config.PrimaryDBServerName + "/failoverGroups/" + config.DBName + "/failover?api-version=2015-05-01-preview");
+                client2.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Sql/servers/" + Environment.GetEnvironmentVariable("PrimaryDBServerName") + "/failoverGroups/" + Environment.GetEnvironmentVariable("DBName") + "/failover?api-version=2015-05-01-preview");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, "");
@@ -103,7 +103,7 @@ namespace FunctionAppFailover
             string name = req.Query["serverName"].ToString().ToLower();
             if (name == null || name == "")
             {
-                name = config.TargetServerRegion;
+                name = Environment.GetEnvironmentVariable("TargetServerRegion");
             }
 
             string token = GetBearerToken(config);
