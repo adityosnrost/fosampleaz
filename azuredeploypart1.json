@@ -639,7 +639,7 @@
           ],
           "properties": {
             "Project": "[parameters('functionsAppProject')]",
-            "FunctionDeployName": "variables('functionsAppName')",
+            "FunctionDeployName": "[variables('functionsAppName')]",
             "FullAutomatedFailover": 1,
             "SubscriptionId": "[subscription().subscriptionId]",
             "OriginServerRegion": "[variables('webAppLocations')[1]]",
