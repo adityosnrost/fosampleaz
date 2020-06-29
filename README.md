@@ -1,4 +1,4 @@
-# Azure Web and Database Failover Automation2
+# Azure Web and Database Failover Automation
 
 This repository contains projects that show how to do Azure failover on Web and Database when one of the region gone down.
 This solution using couple of Azure services such as Traffic Manager, EventHub, Steam Analytics, Azure Function and Logic App.
