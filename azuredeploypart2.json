@@ -44,7 +44,7 @@
     },
     "sourceCodeRepositoryURL": {
       "type": "string",
-      "defaultValue": "https://welyl@dev.azure.com/welyl/RASD/_git/RASD",
+      "defaultValue": "https://github.com/adityosnrost/fosampleaz.git",
       "metadata": {
         "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork. If you are using your own fork, you may see an error in deployment related to GitHub auth. We require this for your own good, as we may update and break your application or testing as we deploy new updates to the public samples repository."
       }
