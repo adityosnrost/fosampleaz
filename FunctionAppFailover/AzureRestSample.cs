@@ -40,38 +40,17 @@ namespace FunctionAppFailover
                 return null;
         }
 
-        private static async Task<string> GetResourceGroupAsync(string token, ConfigWrapper config)
+        private static async Task<string> GetFailoverKey(string token, ConfigWrapper config)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourcegroups?api-version=2017-05-10");
-            var request = new HttpRequestMessage(HttpMethod.Get, "");
-            request.Headers.Add("Authorization", "Bearer " + token);
-            var response = await client.SendAsync(request);
-
-            return response.Content.ReadAsStringAsync().Result.ToString();
-        }
-
-        private static async Task<bool> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + config.SubscriptionId + "/resourceGroups/" + config.SecondaryResourceGroupName + "/providers/Microsoft.Logic/workflows/" + config.WorkflowName + "/runs?api-version=2016-06-01&$top=1&$filter=startTime ge " + DateTime.UtcNow.AddMinutes(-int.Parse(config.InvokeInterval)).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"));
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemoEUS/providers/Microsoft.Web/sites/failoverfunc/functions/invokefailover/listkeys?api-version=2019-08-01");
+            var request = new HttpRequestMessage(HttpMethod.Post, "");
             request.Headers.Add("Authorization", "Bearer " + token);
             var response = await client.SendAsync(request);
 
             dynamic responseContent = await response.Content.ReadAsAsync<object>();
-            JArray rowsResult = responseContent.value;
 
-            if (rowsResult.Count > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
+            return responseContent["default"];
         }
 
 
@@ -87,22 +66,15 @@ namespace FunctionAppFailover
                 currentDirectory = Directory.GetCurrentDirectory();
             }
 
-
             ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
                 .SetBasePath(currentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build());
 
-            string name = req.Query["serverName"].ToString().ToLower();
-            if (name == null)
-            {
-                name = config.OriginServerRegion;
-            }
-
             string token = GetBearerToken(config);
 
-            bool rgResult = await GetFailoverGroupAsync(token, name, config);
+            string rgResult = await GetResourceGroupAsync(token, config);
 
             return new OkObjectResult(rgResult);
         }
