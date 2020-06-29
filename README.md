@@ -3,7 +3,7 @@
 This repository contains projects that show how to do Azure failover on Web and Database when one of the region gone down.
 This solution using couple of Azure services such as Traffic Manager, EventHub, Steam Analytics, Azure Function and Logic App.
 
-This repository can be accessed directly using https://github.com/adityosnrost/samplefailover.
+This repository can be accessed directly using https://github.com/adityosnrost/fosampleaz.
 
 ## Prerequisites for failover project
 
@@ -17,36 +17,40 @@ Fork this repo, and you will start editing your own version of this projects. ([
 
 ## Create and deploy full scenario failover solution services
 
-### 1. Deploy Web Apps and Databases with failover resources 
+### 1. Create AAD App Client and Retreived Key 
 
-First, We deploy web apps and databases instances that setup with failover feature. 
-These setup include traffic manager to manage web apps failover and failover group on these deployed DB.
+First, We need to create AAD App Client and retreived several information that we need to add on appsettings later. These are some value that we need to get:
+tenant_id, grant_type, client_id, client_secret
 
+Please go through this link tutorial to get required information to be added later: https://blog.jongallant.com/2017/11/azure-rest-apis-postman/
+
+### 2. Add App Client information to Appsettings file 
+
+Add information that we got from ealier step into your appsettings.json files on FunctionAppFailover folder. We need this to be setup, so our application can access resources at Azure
+
+### 3. Deploy Based Instances
+
+At this step, we are deploying these instances:
+2 Web Apps, 2 Database with Failover, Traffic Management, Event Hub, Storage, Logic App, and Function App.
+
+Click below button to automatically deploy your instances using Azure ARM Template:
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-v3-dotnet-core-functions-integration%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-### 2. Deploy Application and Databases (Optional, but recommended)
+You can check the web project here ([Dotnet Sample Project](https://github.com/adityosnrost/fosampleaz/tree/master/WebApiDrDemoCS)).
 
-Deploy web with database project that you have or using sample project from this repository. 
-You can check the web project here ([Dotnet Sample Project](https://github.com/adityosnrost/samplefailover/tree/master/WebApiDrDemoCS)).
+### 3. Deploy final Instances and manage your email account on Logic App
 
-### 3. Deploy and config alert solution
+After we have apps and database instances, we need to add Streaming Analytics to finalized our end to end auto failover for this project.
+Why Streaming Analytics is seperated from template in step 3? There are some limitation on function listkey to get our functions app listkey added into Streaming Analytics. Functions need to be fully deployed with source control to finished.
 
-We need to config traffic manager to send information of current status into event hub and monitored by stream analytics.
-First, we deploy event hub and stream analytics through this template button below:
-
+Click below button to automatically deploy your instances using Azure ARM Template:
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-v3-dotnet-core-functions-integration%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-After deployment is successful, then we config event hub to capture traffic manager event.
+After deployment is successful, then we config logic app office 365 connectors. Open your Azure portal, go to Logic App deployment. Click on app designer and manage the office 365 connector to use your email domain.
 
-. . . . . .
-
-### 3. Deploy the failover solution services
+## NOTE
 
 If not already done : fork the repo (IMPORTANT!).
-
-This part, we will deploy Functions, and Logic App using ARM deployment template below. 
-Please check appsettings.json and match them with your deployment on Azure. This setting is very important to be set up. 
-Those setup is for running scripts on web failover event that occured and sending alert / do failover on DB.
 
 Make sure that your changes is commited and push into your repository. Then deploy the solution using below deploy to azure button.
 
