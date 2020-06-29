@@ -670,7 +670,7 @@
           "apiVersion": "2015-08-01",
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', variables('functionsAppName'))]",
-            "[concat('Microsoft.Web/sites/', variables('functionsAppName'), '/config/appsettings')]"
+            "[resourceId('Microsoft.Web/sites/config', variables('functionsAppName'), 'appsettings')]"
           ],
           "properties": {
             "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
