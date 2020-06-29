@@ -1,0 +1,211 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": "foevhub",
+      "metadata": {
+        "description": "The name of the event hub."
+      }
+    },
+    "eventHubNamespaceName": {
+      "type": "string",
+      "defaultValue": "[concat('foevhubnamespace', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "The name of the Event Hubs namespace."
+      }
+    },
+    "eventhubAuthorizationRuleName": {
+      "type": "string",
+      "defaultValue": "RootManageSharedAccessKey",
+      "metadata": {
+        "description": "Name of Namespace Authorization Rule."
+      }
+    },
+    "trafficManagerName": {
+      "defaultValue": "traffsasnfo",
+      "type": "String"
+    },
+    "diagnosticLogName": {
+      "defaultValue": "diagsnfosam",
+      "type": "String"
+    },
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "snwebfosamid",
+      "metadata": {
+        "description": "Relative DNS name for the WebApps, must be globally unique.  An index will be appended for each Web App."
+      }
+    },
+    "webAppProject": {
+      "type": "string",
+      "defaultValue": "WebApiDrDemoCS"
+    },
+    "sourceCodeRepositoryURL": {
+      "type": "string",
+      "defaultValue": "https://welyl@dev.azure.com/welyl/RASD/_git/RASD",
+      "metadata": {
+        "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork. If you are using your own fork, you may see an error in deployment related to GitHub auth. We require this for your own good, as we may update and break your application or testing as we deploy new updates to the public samples repository."
+      }
+    },
+    "sourceCodeBranch": {
+      "type": "string",
+      "defaultValue": "master",
+      "metadata": {
+        "description": "Sourcecode Repo branch. This should be set to Master for the public sample. You can adjust this to point to your own fork branch as recommended"
+      }
+    },
+    "sqlServerPrimaryName": {
+      "type": "string",
+      "defaultValue": "primsofosamsn",
+      "metadata": {
+        "description": "The name of the primary SQL Server."
+      }
+    },
+    "sqlServerSecondaryName": {
+      "type": "string",
+      "defaultValue": "secosofosamsn",
+      "metadata": {
+        "description": "The name of the secondary SQL Server."
+      }
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      "defaultValue": "productdbfosam",
+      "metadata": {
+        "description": "The name of the database."
+      }
+    },
+    "sqlServerAdminUsername": {
+      "type": "string",
+      "defaultValue": "snadmin",
+      "metadata": {
+        "description": "The administrator username of the primary SQL Server."
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "Startin1994",
+      "metadata": {
+        "description": "The administrator password of the primary SQL Server."
+      }
+    },
+    "sqlFailoverGroupName": {
+      "type": "string",
+      "defaultValue": "sofogrousnam",
+      "metadata": {
+        "description": "The name of the failover group."
+      }
+    },
+    "connections_office365_name": {
+      "defaultValue": "office365fosample",
+      "type": "String"
+    },
+    "workflows_failoverflow_name": {
+      "defaultValue": "failoverflow",
+      "type": "String"
+    },
+    "functionsAppName": {
+      "type": "string",
+      "defaultValue": "failoverfuncsample",
+      "metadata": {
+        "description": "The name of the Function application to be deployed. The name will automatically be made unique on deployment, all lowercase letters or numbers with no spaces."
+      }
+    },
+    "functionsAppProject": {
+      "type": "string",
+      "defaultValue": "FunctionAppFailover"
+    },
+    "streamingjobs_tmstatus_stream_name": {
+      "defaultValue": "tmstatus-streamsnfo",
+      "type": "String"
+    }
+  },
+  "variables": {
+    "webAppLocations": [
+      "East US",
+      "Southeast Asia"
+    ],
+    "webAppStage": [
+      "Secondary",
+      "Primary"
+    ],
+    "sqlDatabaseServiceObjective": "Basic",
+    "sqlDatabaseEdition": "Basic",
+    "storageAccountid": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+    "storageAccountName": "[concat('azfnstorage',uniqueString(resourceGroup().id))]",
+    "functionsAppName": "[concat(toLower(parameters('functionsAppName')),'-',uniqueString(resourceGroup().id))]",
+    "functionHostingPlanName": "[concat(variables('functionsAppName'), '-plan')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.StreamAnalytics/streamingjobs",
+      "apiVersion": "2016-03-01",
+      "name": "[parameters('streamingjobs_tmstatus_stream_name')]",
+      "location": "[variables('webAppLocations')[0]]",
+      "properties": {
+        "sku": {
+          "name": "Standard"
+        },
+        "eventsOutOfOrderPolicy": "Adjust",
+        "outputErrorPolicy": "Stop",
+        "eventsOutOfOrderMaxDelayInSeconds": 0,
+        "eventsLateArrivalMaxDelayInSeconds": 5,
+        "dataLocale": "en-US",
+        "compatibilityLevel": "1.1",
+        "inputs": [
+          {
+            "name": "soinputfostream",
+            "properties": {
+              "type": "Stream",
+              "datasource": {
+                "type": "Microsoft.ServiceBus/EventHub",
+                "properties": {
+                  "eventHubName": "[parameters('eventHubName')]",
+                  "serviceBusNamespace": "[parameters('eventHubNamespaceName')]",
+                  "sharedAccessPolicyName": "PreviewDataPolicy",
+                  "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', parameters('eventHubNamespaceName'), parameters('eventHubName'), 'PreviewDataPolicy'),'2017-04-01').primaryKey]"
+                }
+              },
+              "serialization": {
+                "type": "Json",
+                "properties": {
+                  "encoding": "UTF8"
+                }
+              }
+            }
+          }
+        ],
+        "transformation": {
+          "name": "fosnsamtransstream",
+          "properties": {
+            "streamingUnits": 3,
+            "query": "SELECT rec.ArrayValue.Time FROM [soinputfostream] i CROSS APPLY GetArrayElements(i.records) as rec WHERE  rec.ArrayValue.properties.Status = 'Down'"
+          }
+        },
+        "outputs": [
+          {
+            "name": "fosnsamtransoutream",
+            "properties": {
+              "datasource": {
+                "type": "Microsoft.AzureFunction",
+                "properties": {
+                  "functionAppName": "[variables('functionsAppName')]",
+                  "functionName": "AlertFailoverAction",
+                  "apiKey": "[listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionsAppName')), '/host/default/'),'2016-08-01').functionKeys.default]"
+                },
+                "serialization": {
+                  "type": "Json",
+                  "properties": {
+                    "encoding": "UTF8"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

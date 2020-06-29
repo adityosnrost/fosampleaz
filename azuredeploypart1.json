@@ -1,0 +1,684 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": "foevhub",
+      "metadata": {
+        "description": "The name of the event hub."
+      }
+    },
+    "eventHubNamespaceName": {
+      "type": "string",
+      "defaultValue": "[concat('foevhubnamespace', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "The name of the Event Hubs namespace."
+      }
+    },
+    "eventhubAuthorizationRuleName": {
+      "type": "string",
+      "defaultValue": "RootManageSharedAccessKey",
+      "metadata": {
+        "description": "Name of Namespace Authorization Rule."
+      }
+    },
+    "trafficManagerName": {
+      "defaultValue": "traffsasnfo",
+      "type": "String"
+    },
+    "diagnosticLogName": {
+      "defaultValue": "diagsnfosam",
+      "type": "String"
+    },
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "snwebfosamid",
+      "metadata": {
+        "description": "Relative DNS name for the WebApps, must be globally unique.  An index will be appended for each Web App."
+      }
+    },
+    "webAppProject": {
+      "type": "string",
+      "defaultValue": "WebApiDrDemoCS"
+    },
+    "sourceCodeRepositoryURL": {
+      "type": "string",
+      "defaultValue": "https://welyl@dev.azure.com/welyl/RASD/_git/RASD",
+      "metadata": {
+        "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork. If you are using your own fork, you may see an error in deployment related to GitHub auth. We require this for your own good, as we may update and break your application or testing as we deploy new updates to the public samples repository."
+      }
+    },
+    "sourceCodeBranch": {
+      "type": "string",
+      "defaultValue": "testingarm",
+      "metadata": {
+        "description": "Sourcecode Repo branch. This should be set to Master for the public sample. You can adjust this to point to your own fork branch as recommended"
+      }
+    },
+    "sqlServerPrimaryName": {
+      "type": "string",
+      "defaultValue": "primsofosamsn",
+      "metadata": {
+        "description": "The name of the primary SQL Server."
+      }
+    },
+    "sqlServerSecondaryName": {
+      "type": "string",
+      "defaultValue": "secosofosamsn",
+      "metadata": {
+        "description": "The name of the secondary SQL Server."
+      }
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      "defaultValue": "productdbfosam",
+      "metadata": {
+        "description": "The name of the database."
+      }
+    },
+    "sqlServerAdminUsername": {
+      "type": "string",
+      "defaultValue": "snfoadmin",
+      "metadata": {
+        "description": "The administrator username of the primary SQL Server."
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "Fomaster2020",
+      "metadata": {
+        "description": "The administrator password of the primary SQL Server."
+      }
+    },
+    "sqlFailoverGroupName": {
+      "type": "string",
+      "defaultValue": "sofogrousnam",
+      "metadata": {
+        "description": "The name of the failover group."
+      }
+    },
+    "connections_office365_name": {
+      "defaultValue": "office365fosample",
+      "type": "String"
+    },
+    "workflows_failoverflow_name": {
+      "defaultValue": "failoverflow",
+      "type": "String"
+    },
+    "functionsAppName": {
+      "type": "string",
+      "defaultValue": "failoverfuncsample",
+      "metadata": {
+        "description": "The name of the Function application to be deployed. The name will automatically be made unique on deployment, all lowercase letters or numbers with no spaces."
+      }
+    },
+    "functionsAppProject": {
+      "type": "string",
+      "defaultValue": "FunctionAppFailover"
+    },
+    "streamingjobs_tmstatus_stream_name": {
+      "defaultValue": "tmstatus-streamsnfo",
+      "type": "String"
+    }
+  },
+  "variables": {
+    "webAppLocations": [
+      "East US",
+      "Southeast Asia"
+    ],
+    "webAppStage": [
+      "Secondary",
+      "Primary"
+    ],
+    "sqlDatabaseServiceObjective": "Basic",
+    "sqlDatabaseEdition": "Basic",
+    "storageAccountid": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+    "storageAccountName": "[concat('azfnstorage',uniqueString(resourceGroup().id))]",
+    "functionsAppName": "[concat(toLower(parameters('functionsAppName')),'-',uniqueString(resourceGroup().id))]",
+    "functionHostingPlanName": "[concat(variables('functionsAppName'), '-plan')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()])]",
+      "type": "Microsoft.Web/serverfarms",
+      "copy": {
+        "name": "farmloop",
+        "count": "[length(variables('webAppLocations'))]"
+      },
+      "location": "[variables('webAppLocations')[copyIndex()]]",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[concat(parameters('webAppName'), variables('webAppStage')[copyIndex()])]",
+      "type": "Microsoft.Web/sites",
+      "copy": {
+        "name": "siteloop",
+        "count": "[length(variables('webAppLocations'))]"
+      },
+      "location": "[variables('webAppLocations')[copyIndex()]]",
+      "dependsOn": [
+        "[concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()])]"
+      ],
+      "properties": {
+        "serverFarmId": "[concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()])]"
+      },
+      "resources": [
+        {
+          "type": "config",
+          "name": "appsettings",
+          "apiVersion": "2015-08-01",
+          "comments": "These are the default appsettings configured on the both web apps.",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()]))]",
+            "[resourceId('Microsoft.Web/Sites', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]"
+          ],
+          "properties": {
+            "Project": "[parameters('webAppProject')]"
+          }
+        },
+        {
+          "type": "sourcecontrols",
+          "name": "web",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]",
+            "[concat('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]), '/config/appsettings')]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
+            "branch": "[parameters('sourceCodeBranch')]",
+            "IsManualIntegration": "true"
+          }
+        },
+        {
+          "apiVersion": "2018-02-01",
+          "type": "config",
+          "name": "connectionstrings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]",
+            "[concat('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]), '/config/appsettings')]"
+          ],
+          "properties": {
+            "DefaultConnection": {
+              "value": "[concat('Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';')]",
+              "type": "SQLAzure"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2018-01-01-preview",
+      "name": "[parameters('eventHubNamespaceName')]",
+      "location": "East US",
+      "sku": {
+        "name": "Basic",
+        "tier": "Basic",
+        "capacity": 1
+      },
+      "properties": {
+        "zoneRedundant": false,
+        "isAutoInflateEnabled": false,
+        "maximumThroughputUnits": 0,
+        "kafkaEnabled": false
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(parameters('eventHubNamespaceName'), '/RootManageSharedAccessKey')]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
+      ],
+      "properties": {
+        "rights": [
+          "Listen",
+          "Manage",
+          "Send"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'))]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
+      ],
+      "properties": {
+        "messageRetentionInDays": 1,
+        "partitionCount": 2,
+        "status": "Active"
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'), '/PreviewDataPolicy')]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('eventHubName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
+      ],
+      "properties": {
+        "rights": [
+          "Listen"
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "name": "[parameters('trafficManagerName')]",
+      "location": "global",
+      "properties": {
+        "profileStatus": "Enabled",
+        "trafficRoutingMethod": "Priority",
+        "dnsConfig": {
+          "relativeName": "[parameters('trafficManagerName')]",
+          "ttl": 30
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/",
+          "intervalInSeconds": 10,
+          "timeoutInSeconds": 5,
+          "toleratedNumberOfFailures": 3
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-11-01",
+      "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+      "dependsOn": [
+        "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
+        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[copyIndex()])]"
+      ],
+      "location": "global",
+      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[copyIndex()])]",
+      "copy": {
+        "name": "endpointloop",
+        "count": "[length(variables('webAppLocations'))]"
+      },
+      "properties": {
+        "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]",
+        "endpointStatus": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles/providers/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "name": "[concat(parameters('trafficManagerName'),'/microsoft.insights/', parameters('diagnosticLogName'))]",
+      "location": "East US",
+      "dependsOn": [
+        "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
+        "[concat('Microsoft.EventHub/namespaces/', parameters('eventHubNamespaceName'))]"
+      ],
+      "properties": {
+        "name": "[parameters('diagnosticLogName')]",
+        "eventHubAuthorizationRuleId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('eventHubNamespaceName'), parameters('eventhubAuthorizationRuleName'))]",
+        "eventHubName": "[parameters('eventHubName')]",
+        "metrics": [
+          {
+            "category": "AllMetrics",
+            "enabled": false,
+            "retentionPolicy": {
+              "days": 0,
+              "enabled": false
+            },
+            "timeGrain": null
+          }
+        ],
+        "logs": [
+          {
+            "category": "ProbeHealthStatusEvents",
+            "enabled": true
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Sql/servers",
+      "kind": "v12.0",
+      "name": "[parameters('sqlServerPrimaryName')]",
+      "apiVersion": "2019-06-01-preview",
+      "location": "[variables('webAppLocations')[1]]",
+      "properties": {
+        "administratorLogin": "[parameters('sqlServerAdminUsername')]",
+        "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "type": "firewallrules",
+          "apiVersion": "2015-05-01-preview",
+          "name": "AllowAllAzureIps",
+          "location": "[variables('webAppLocations')[1]]",
+          "dependsOn": [
+            "[parameters('sqlServerPrimaryName')]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "apiVersion": "2019-06-01-preview",
+          "type": "failoverGroups",
+          "name": "[parameters('sqlFailoverGroupName')]",
+          "properties": {
+            "serverName": "[parameters('sqlServerPrimaryName')]",
+            "partnerServers": [
+              {
+                "id": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
+              }
+            ],
+            "readWriteEndpoint": {
+              "failoverPolicy": "Automatic",
+              "failoverWithDataLossGracePeriodMinutes": 60
+            },
+            "readOnlyEndpoint": {
+              "failoverPolicy": "Disabled"
+            },
+            "databases": [
+              "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]"
+            ]
+          },
+          "dependsOn": [
+            "[parameters('sqlServerPrimaryName')]",
+            "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]",
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
+          ]
+        },
+        {
+          "name": "[parameters('sqlDatabaseName')]",
+          "type": "databases",
+          "apiVersion": "2019-06-01-preview",
+          "location": "[variables('webAppLocations')[1]]",
+          "dependsOn": [
+            "[parameters('sqlServerPrimaryName')]"
+          ],
+          "properties": {
+            "edition": "[variables('sqlDatabaseEdition')]",
+            "requestedServiceObjectiveName": "[variables('sqlDatabaseServiceObjective')]"
+          },
+          "resources": [
+            {
+              "type": "extensions",
+              "apiVersion": "2014-04-01",
+              "name": "Import",
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]"
+              ],
+              "properties": {
+                "storageKeyType": "StorageAccessKey",
+                "storageKey": "KtLfSIYWJvLhv16yiwAkE21a5wcKdtqCv579/1rXL0ZNkJ+Ou+21fxt9gksYJHWw13Ihx0Vrx7mUncPyZHT/gw==",
+                "storageUri": "https://foassetmanage.blob.core.windows.net/databasefo/productdb.bacpac",
+                "administratorLogin": "[parameters('sqlServerAdminUsername')]",
+                "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
+                "operationMode": "Import"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Sql/servers",
+      "kind": "v12.0",
+      "name": "[parameters('sqlServerSecondaryName')]",
+      "apiVersion": "2019-06-01-preview",
+      "location": "[variables('webAppLocations')[0]]",
+      "properties": {
+        "administratorLogin": "[parameters('sqlServerAdminUsername')]",
+        "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "type": "firewallrules",
+          "apiVersion": "2015-05-01-preview",
+          "name": "AllowAllAzureIps",
+          "location": "[variables('webAppLocations')[0]]",
+          "dependsOn": [
+            "[parameters('sqlServerSecondaryName')]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "name": "[parameters('connections_office365_name')]",
+      "location": "eastus",
+      "properties": {
+        "displayName": "[parameters('connections_office365_name')]",
+        "customParameterValues": {},
+        "api": {
+          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/eastus/managedApis/office365')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2017-07-01",
+      "name": "[parameters('workflows_failoverflow_name')]",
+      "location": "eastus",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]"
+      ],
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "method": "POST",
+                "schema": {
+                  "properties": {
+                    "address": {
+                      "properties": {
+                        "FailoverFunctionURL": {
+                          "type": "string"
+                        },
+                        "PrimaryWebName": {
+                          "type": "string"
+                        },
+                        "SecondaryWebName": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "actions": {
+            "Initialize_variable": {
+              "runAfter": {},
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "EmailTemplate",
+                    "type": "string",
+                    "value": "<html>\n<body>\n<p>The Traffic Manager detected failure on the Web frontend <b>@{triggerBody()?['PrimaryWebName']}</b> on <b>@{utcNow()}  (UTC Time)</b>.\nAs such we are failing over to<b> @{triggerBody()?['SecondaryWebName']} </b>automatically.\n</p>\n<p>\nPlease click <a href=\"@{triggerBody()?['FailoverFunctionURL']}\">this link</a> to initiave the database failover. Alternatively, you may copy and paste the following link in to your browser: <b> @{triggerBody()?['FailoverFunctionURL']}</b>\n</p>\n</body>\n</html>"
+                  }
+                ]
+              }
+            },
+            "Send_an_email_(V2)": {
+              "runAfter": {
+                "Initialize_variable": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "Body": "<p>@{variables('EmailTemplate')}</p>",
+                  "Subject": "System down: Database Failover need to be approved",
+                  "To": "adityosn@hotmail.com; welyl@microsoft.com"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['office365']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/v2/Mail"
+              }
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "office365": {
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                "connectionName": "parameters('connections_office365_name')",
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/eastus/managedApis/office365')]"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[variables('webAppLocations')[0]]",
+      "comments": "This storage account is used by the functions.",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage"
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('functionHostingPlanName')]",
+      "apiVersion": "2015-08-01",
+      "location": "[variables('webAppLocations')[0]]",
+      "comments": "This hosting plan is created to deploy the function app and set the billing sku tier",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic",
+        "size": "Y1",
+        "family": "Y",
+        "capacity": 0
+      },
+      "kind": "functionapp",
+      "properties": {
+        "name": "[variables('functionHostingPlanName')]",
+        "computeMode": "0"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionsAppName')]",
+      "apiVersion": "2015-08-01",
+      "location": "[variables('webAppLocations')[0]]",
+      "comments": "This function app depends on the media services account and storage account and will pull down the source code from Github",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', variables('functionHostingPlanName'))]",
+        "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]"
+      ],
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "[variables('functionHostingPlanName')]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "beta"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "type": "config",
+          "name": "appsettings",
+          "apiVersion": "2015-08-01",
+          "comments": "These are the default appsettings configured on the functions app.",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', variables('functionHostingPlanName'))]",
+            "[resourceId('Microsoft.Web/Sites', variables('functionsAppName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+            "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]"
+          ],
+          "properties": {
+            "Project": "[parameters('functionsAppProject')]",
+            "FunctionDeployName": "variables('functionsAppName')",
+            "FullAutomatedFailover": 1,
+            "SubscriptionId": "[subscription().subscriptionId]",
+            "OriginServerRegion": "[variables('webAppLocations')[1]]",
+            "TargetServerRegion": "[variables('webAppLocations')[0]]",
+            "PrimaryWebName": "[concat(parameters('webAppName'), variables('webAppStage')[1])]",
+            "SecondaryWebName": "[concat(parameters('webAppName'), variables('webAppStage')[0])]",
+            "PrimaryDBServerName": "[parameters('sqlServerPrimaryName')]",
+            "SecondaryDBServerName": "[parameters('sqlServerSecondaryName')]",
+            "DBName": "[parameters('sqlDatabaseName')]",
+            "WorkflowName": "[parameters('workflows_failoverflow_name')]",
+            "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
+            "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
+            "ResourceGroupID": "[resourceGroup().id]",
+            "ResourceGroupName": "[resourceGroup().name]",
+            "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+            "FUNCTIONS_EXTENSION_VERSION": "~2",
+            "WEBSITE_NODE_DEFAULT_VERSION": "10.14.1",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTSHARE": "[variables('functionsAppName')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "StorageConnection": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+          }
+        },
+        {
+          "type": "sourcecontrols",
+          "name": "web",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionsAppName'))]",
+            "[concat('Microsoft.Web/sites/', variables('functionsAppName'), '/config/appsettings')]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
+            "branch": "[parameters('sourceCodeBranch')]",
+            "IsManualIntegration": "true"
+          }
+        }
+      ]
+    }
+  ]
+}
