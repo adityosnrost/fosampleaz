@@ -24,17 +24,13 @@ Fork this repo, and you will start editing your own version of this projects. ([
 
 ## Getting ready your necessary keys and secrets
 
-### 1. Create AAD (Azure Active Directory) App Client and Retreived Key
+In this step, you need to create AAD (Azure Active Directory) App Client and Retreived the keys
 
 Firstly, we need to create AAD App Client and retreived several information such as **tenant_id, grant_type, client_id, client_secret**.
 
 Please go through this link tutorial to get required information to be added later: https://blog.jongallant.com/2017/11/azure-rest-apis-postman/
 
-**Ensure you keep those information securely and avoid exposing those to the public.**
-
-### 2. Add App Client information to Appsettings file
-
-Add information that we got from ealier step into your [appsettings.json](SourceCode/FunctionAppFailover/appsettings.json) file on [SourceCode/FunctionAppFailover](SourceCode/FunctionAppFailover) folder. They are primarily used as authorization keys to perform Database Failover programmatically thru our Azure Functions.
+**Ensure you keep those information securely and avoid exposing those to the public.** 
 
 ## One Click deployment
 
@@ -44,9 +40,14 @@ Click below button to automatically deploy your instances using Azure ARM Templa
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
+Add those info / keys (**tenant_id, grant_type, client_id, client_secret**) that we got from ealier to your deployment paramter. They are primarily used as authorization keys to perform Database Failover programmatically thru our Azure Functions.
 
+Most of the parameters have been prefilled with the default values. You may optionally update them to your preferred values.
 
-It takes about x minutes
+Click Review + create button to proceed.
+
+It takes about x minutes to deploy the solution.
+
 ## Post deployment configuration
 
 After deployment is successful, then we config logic app office 365 connectors. Open your Azure portal, go to Logic App deployment. Click on app designer and manage the office 365 connector to use your email domain.
