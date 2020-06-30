@@ -1,6 +1,9 @@
-# Azure Web and Database Failover Automation
+# Implementing multi-region deployment and disaster recovery in Azure
 
-This repository contains projects that show how to do Azure failover on Web and Database when one of the region gone down.
+This repository complements the [video series](https://www.youtube.com/playlist?list=PLe32w3jNLanrZ9_X58_3d13tQ5REMmnK3). 
+
+to 
+contains projects that show how to do Azure failover on Web and Database when one of the region gone down.
 This solution using couple of Azure services such as Traffic Manager, EventHub, Steam Analytics, Azure Function and Logic App.
 
 This repository can be accessed directly using https://github.com/adityosnrost/fosampleaz.
