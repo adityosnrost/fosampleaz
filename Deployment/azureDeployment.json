@@ -164,7 +164,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/azuredeploypart1.json",
+          "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/Deployment/azuredeploypart1.json",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -179,7 +179,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/azuredeploypart2.json",
+          "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/Deployment/azuredeploypart2.json",
           "contentVersion": "1.0.0.0"
         }
       }
