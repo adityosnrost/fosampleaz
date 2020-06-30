@@ -2,6 +2,24 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "tenant_id": {
+      "type": "string"
+    },
+    "grant_type": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+      "type": "string"
+    },
+    "OriginEmailAddress": {
+      "type": "string"
+    },
+    "TargetEmailAddress": {
+      "type": "string"
+    },
     "eventHubName": {
       "type": "string",
       "defaultValue": "foevhub",
@@ -651,6 +669,15 @@
             "DBName": "[parameters('sqlDatabaseName')]",
             "FailovergroupName": "[parameters('sqlFailoverGroupName')]",
             "WorkflowName": "[parameters('workflows_failoverflow_name')]",
+            "tenant_id": "[parameters('tenant_id')]",
+            "grant_type": "[parameters('grant_type')]",
+            "client_id": "[parameters('client_id')]",
+            "client_secret": "[parameters('client_secret')]",
+            "OriginEmailAddress": "[parameters('OriginEmailAddress')]",
+            "TargetEmailAddress": "[parameters('TargetEmailAddress')]",
+            "resource": "https://management.azure.com/",
+            "EnvironmentTriggerFailoverVariable": "FullAutomatedFailover",
+            "InvokeInterval": 30,
             "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",

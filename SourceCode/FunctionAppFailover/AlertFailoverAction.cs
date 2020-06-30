@@ -25,16 +25,16 @@ namespace FunctionAppFailover
     {
         static RestClient clientRest = null;
 
-        private static string GetBearerToken(ConfigWrapper config)
+        private static string GetBearerToken()
         {
-            clientRest = new RestClient("https://login.microsoftonline.com/" + config.TenantId + "/oauth2/token");
+            clientRest = new RestClient("https://login.microsoftonline.com/" + Environment.GetEnvironmentVariable("tenant_id") + "/oauth2/token");
             clientRest.Timeout = -1;
             var request = new RestRequest(Method.POST);
             request.AlwaysMultipartFormData = true;
-            request.AddParameter("grant_type", config.GrantType);
-            request.AddParameter("client_id", config.ClientId);
-            request.AddParameter("client_secret", config.ClientSecret);
-            request.AddParameter("resource", config.Resource);
+            request.AddParameter("grant_type", Environment.GetEnvironmentVariable("grant_type"));
+            request.AddParameter("client_id", Environment.GetEnvironmentVariable("client_id"));
+            request.AddParameter("client_secret", Environment.GetEnvironmentVariable("client_secret"));
+            request.AddParameter("resource", Environment.GetEnvironmentVariable("resource"));
             IRestResponse response = clientRest.Execute(request);
             dynamic jo = JsonConvert.DeserializeObject(response.Content);
             Console.WriteLine(response.Content);
@@ -58,7 +58,7 @@ namespace FunctionAppFailover
             return responseContent["default"];
         }
 
-        private static async Task<string> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
+        private static async Task<string> GetFailoverGroupAsync(string token, string name)
         {
             var client = new HttpClient();
             if (name == Environment.GetEnvironmentVariable("TargetServerRegion"))
@@ -79,7 +79,7 @@ namespace FunctionAppFailover
             return responseContent.properties.replicationRole;
         }
 
-        private static async Task<string> TriggerFailover(ConfigWrapper config, string token)
+        private static async Task<string> TriggerFailover(string token)
         {
             string functionKey = await GetFailoverKey(token);
 
@@ -90,7 +90,7 @@ namespace FunctionAppFailover
             return response.Content.ReadAsStringAsync().Result.ToString();
         }
 
-        private static async Task<string> TriggerSendEmail(ConfigWrapper config, string token)
+        private static async Task<string> TriggerSendEmail(string token)
         {
             string functionKey = await GetFailoverKey(token);
 
@@ -106,10 +106,10 @@ namespace FunctionAppFailover
             return "Email has sent successfully";
         }
 
-        private static async Task<bool> GetEmailInvocationInterval(string token, ConfigWrapper config)
+        private static async Task<bool> GetEmailInvocationInterval(string token)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Logic/workflows/" + Environment.GetEnvironmentVariable("WorkflowName") + "/runs?api-version=2016-06-01&$top=1&$filter=startTime ge " + DateTime.UtcNow.AddMinutes(-int.Parse(config.InvokeInterval)).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"));
+            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Logic/workflows/" + Environment.GetEnvironmentVariable("WorkflowName") + "/runs?api-version=2016-06-01&$top=1&$filter=startTime ge " + DateTime.UtcNow.AddMinutes(-int.Parse(Environment.GetEnvironmentVariable("InvokeInterval"))).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"));
 
             var request = new HttpRequestMessage(HttpMethod.Get, "");
             request.Headers.Add("Authorization", "Bearer " + token);
@@ -141,29 +141,23 @@ namespace FunctionAppFailover
                 currentDirectory = Directory.GetCurrentDirectory();
             }
 
-            ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
-                .SetBasePath(currentDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build());
-
-            string token = GetBearerToken(config);
+            string token = GetBearerToken();
             string name = Environment.GetEnvironmentVariable("TargetServerRegion");
-            string rgResult = await GetFailoverGroupAsync(token, name, config);
+            string rgResult = await GetFailoverGroupAsync(token, name);
             string actionResult;
 
             if (rgResult != "Primary")
             {
-                bool isEmailInterval = await GetEmailInvocationInterval(token, config);
+                bool isEmailInterval = await GetEmailInvocationInterval(token);
 
-                string failoverActionType = System.Environment.GetEnvironmentVariable(config.EnvironmentTriggerFailoverVariable, EnvironmentVariableTarget.Process);
+                string failoverActionType = Environment.GetEnvironmentVariable("EnvironmentTriggerFailoverVariable");
                 if (failoverActionType == "1")
                 {
-                    actionResult = await TriggerFailover(config, token);
+                    actionResult = await TriggerFailover(token);
                 }
                 else if (failoverActionType == "0" && isEmailInterval == false)
                 {
-                    actionResult = await TriggerSendEmail(config, token);
+                    actionResult = await TriggerSendEmail(token);
                 }
                 else
                 {

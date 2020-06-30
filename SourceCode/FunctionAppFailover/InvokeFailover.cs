@@ -24,19 +24,19 @@ namespace FunctionAppFailover
     {
         static RestClient client = null; 
 
-        private static string GetBearerToken(ConfigWrapper config)
+        private static string GetBearerToken()
         {
-            client = new RestClient("https://login.microsoftonline.com/" + config.TenantId + "/oauth2/token");
-            client.Timeout = -1;
+            clientRest = new RestClient("https://login.microsoftonline.com/" + Environment.GetEnvironmentVariable("tenant_id") + "/oauth2/token");
+            clientRest.Timeout = -1;
             var request = new RestRequest(Method.POST);
             request.AlwaysMultipartFormData = true;
-            request.AddParameter("grant_type", config.GrantType);
-            request.AddParameter("client_id", config.ClientId);
-            request.AddParameter("client_secret", config.ClientSecret);
-            request.AddParameter("resource", config.Resource);
-            IRestResponse response = client.Execute(request);
-            Console.WriteLine(response.Content);
+            request.AddParameter("grant_type", Environment.GetEnvironmentVariable("grant_type"));
+            request.AddParameter("client_id", Environment.GetEnvironmentVariable("client_id"));
+            request.AddParameter("client_secret", Environment.GetEnvironmentVariable("client_secret"));
+            request.AddParameter("resource", Environment.GetEnvironmentVariable("resource"));
+            IRestResponse response = clientRest.Execute(request);
             dynamic jo = JsonConvert.DeserializeObject(response.Content);
+            Console.WriteLine(response.Content);
             string token = jo.access_token.Value;
             if (!string.IsNullOrEmpty(token))
                 return token;
@@ -44,7 +44,7 @@ namespace FunctionAppFailover
                 return null;
         }
 
-        private static async Task<string> GetFailoverGroupAsync(string token, string name, ConfigWrapper config)
+        private static async Task<string> GetFailoverGroupAsync(string token, string name)
         {
             var client = new HttpClient();
             if (name == Environment.GetEnvironmentVariable("TargetServerRegion"))
@@ -63,7 +63,7 @@ namespace FunctionAppFailover
             return response.Content.ReadAsStringAsync().Result.ToString();
         }
 
-        private static async Task<string> TriggerFailover(string token, string name, ConfigWrapper config)
+        private static async Task<string> TriggerFailover(string token, string name)
         {
             var client2 = new HttpClient();
             if (name == Environment.GetEnvironmentVariable("TargetServerRegion"))
@@ -94,21 +94,15 @@ namespace FunctionAppFailover
                 currentDirectory = Directory.GetCurrentDirectory();
             }
 
-            ConfigWrapper config = new ConfigWrapper(new ConfigurationBuilder()
-                .SetBasePath(currentDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build());
-
             string name = req.Query["serverName"].ToString().ToLower();
             if (name == null || name == "")
             {
                 name = Environment.GetEnvironmentVariable("TargetServerRegion");
             }
 
-            string token = GetBearerToken(config);
+            string token = GetBearerToken();
             string actionResult;
-            actionResult = await TriggerFailover(token, name, config);
+            actionResult = await TriggerFailover(token, name);
 
             return new OkObjectResult(actionResult);
         }
