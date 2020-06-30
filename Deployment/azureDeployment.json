@@ -2,6 +2,24 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "tenant_id": {
+      "type": "string"
+    },
+    "grant_type": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+      "type": "string"
+    },
+    "OriginEmailAddress": {
+      "type": "string"
+    },
+    "TargetEmailAddress": {
+      "type": "string"
+    },
     "eventHubName": {
       "type": "string",
       "defaultValue": "foevhub",
