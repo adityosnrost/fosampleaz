@@ -3,122 +3,15 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "eventHubName": {
-      "type": "string",
-      "defaultValue": "foevhub",
-      "metadata": {
-        "description": "The name of the event hub."
-      }
+      "type": "string"
     },
     "eventHubNamespaceName": {
-      "type": "string",
-      "defaultValue": "[concat('foevhubnamespace', uniqueString(resourceGroup().id))]",
-      "metadata": {
-        "description": "The name of the Event Hubs namespace."
-      }
-    },
-    "eventhubAuthorizationRuleName": {
-      "type": "string",
-      "defaultValue": "RootManageSharedAccessKey",
-      "metadata": {
-        "description": "Name of Namespace Authorization Rule."
-      }
-    },
-    "trafficManagerName": {
-      "defaultValue": "traffsasnfo",
-      "type": "String"
-    },
-    "diagnosticLogName": {
-      "defaultValue": "diagsnfosam",
-      "type": "String"
-    },
-    "webAppName": {
-      "type": "string",
-      "defaultValue": "snwebfosamid",
-      "metadata": {
-        "description": "Relative DNS name for the WebApps, must be globally unique.  An index will be appended for each Web App."
-      }
-    },
-    "webAppProject": {
-      "type": "string",
-      "defaultValue": "WebApiDrDemoCS"
-    },
-    "sourceCodeRepositoryURL": {
-      "type": "string",
-      "defaultValue": "https://github.com/adityosnrost/fosampleaz.git",
-      "metadata": {
-        "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork. If you are using your own fork, you may see an error in deployment related to GitHub auth. We require this for your own good, as we may update and break your application or testing as we deploy new updates to the public samples repository."
-      }
-    },
-    "sourceCodeBranch": {
-      "type": "string",
-      "defaultValue": "master",
-      "metadata": {
-        "description": "Sourcecode Repo branch. This should be set to Master for the public sample. You can adjust this to point to your own fork branch as recommended"
-      }
-    },
-    "sqlServerPrimaryName": {
-      "type": "string",
-      "defaultValue": "primsofosamsn",
-      "metadata": {
-        "description": "The name of the primary SQL Server."
-      }
-    },
-    "sqlServerSecondaryName": {
-      "type": "string",
-      "defaultValue": "secosofosamsn",
-      "metadata": {
-        "description": "The name of the secondary SQL Server."
-      }
-    },
-    "sqlDatabaseName": {
-      "type": "string",
-      "defaultValue": "productdbfosam",
-      "metadata": {
-        "description": "The name of the database."
-      }
-    },
-    "sqlServerAdminUsername": {
-      "type": "string",
-      "defaultValue": "snadmin",
-      "metadata": {
-        "description": "The administrator username of the primary SQL Server."
-      }
-    },
-    "sqlServerAdminPassword": {
-      "type": "securestring",
-      "defaultValue": "Startin1994",
-      "metadata": {
-        "description": "The administrator password of the primary SQL Server."
-      }
-    },
-    "sqlFailoverGroupName": {
-      "type": "string",
-      "defaultValue": "sofogrousnam",
-      "metadata": {
-        "description": "The name of the failover group."
-      }
-    },
-    "connections_office365_name": {
-      "defaultValue": "office365fosample",
-      "type": "String"
-    },
-    "workflows_failoverflow_name": {
-      "defaultValue": "failoverflow",
-      "type": "String"
+      "type": "string"
     },
     "functionsAppName": {
-      "type": "string",
-      "defaultValue": "failoverfuncsample",
-      "metadata": {
-        "description": "The name of the Function application to be deployed. The name will automatically be made unique on deployment, all lowercase letters or numbers with no spaces."
-      }
-    },
-    "functionsAppProject": {
-      "type": "string",
-      "defaultValue": "FunctionAppFailover"
+      "type": "string"
     },
     "streamingjobs_tmstatus_stream_name": {
-      "defaultValue": "tmstatus-streamsnfo",
       "type": "String"
     }
   },

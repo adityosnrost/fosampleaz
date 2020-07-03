@@ -141,20 +141,6 @@
     }
   },
   "variables": {
-    "webAppLocations": [
-      "East US",
-      "Southeast Asia"
-    ],
-    "webAppStage": [
-      "Secondary",
-      "Primary"
-    ],
-    "sqlDatabaseServiceObjective": "Basic",
-    "sqlDatabaseEdition": "Basic",
-    "storageAccountid": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-    "storageAccountName": "[concat('azfnstorage',uniqueString(resourceGroup().id))]",
-    "functionsAppName": "[concat(toLower(parameters('functionsAppName')),'-',uniqueString(resourceGroup().id))]",
-    "functionHostingPlanName": "[concat(variables('functionsAppName'), '-plan')]"
   },
   "resources": [
     {
@@ -166,6 +152,34 @@
         "templateLink": {
           "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/Deployment/azuredeploypart1.json",
           "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "tenant_id": { "value": "[parameters('tenant_id')]" },
+          "grant_type": { "value": "[parameters('grant_type')]" },
+          "client_id": { "value": "[parameters('client_id')]" },
+          "client_secret": { "value": "[parameters('client_secret')]" },
+          "OriginEmailAddress": { "value": "[parameters('OriginEmailAddress')]" },
+          "TargetEmailAddress": { "value": "[parameters('TargetEmailAddress')]" },
+          "eventHubName": { "value": "[parameters('eventHubName')]" },
+          "eventHubNamespaceName": { "value": "[parameters('eventHubNamespaceName')]" },
+          "eventhubAuthorizationRuleName": { "value": "[parameters('eventhubAuthorizationRuleName')]" },
+          "trafficManagerName": { "value": "[parameters('trafficManagerName')]" },
+          "diagnosticLogName": { "value": "[parameters('diagnosticLogName')]" },
+          "webAppName": { "value": "[parameters('webAppName')]" },
+          "webAppProject": { "value": "[parameters('webAppProject')]" },
+          "sourceCodeRepositoryURL": { "value": "[parameters('sourceCodeRepositoryURL')]" },
+          "sourceCodeBranch": { "value": "[parameters('sourceCodeBranch')]" },
+          "sqlServerPrimaryName": { "value": "[parameters('sqlServerPrimaryName')]" },
+          "sqlServerSecondaryName": { "value": "[parameters('sqlServerSecondaryName')]" },
+          "sqlDatabaseName": { "value": "[parameters('sqlDatabaseName')]" },
+          "sqlServerAdminUsername": { "value": "[parameters('sqlServerAdminUsername')]" },
+          "sqlServerAdminPassword": { "value": "[parameters('sqlServerAdminPassword')]" },
+          "sqlFailoverGroupName": { "value": "[parameters('sqlFailoverGroupName')]" },
+          "connections_office365_name": { "value": "[parameters('connections_office365_name')]" },
+          "workflows_failoverflow_name": { "value": "[parameters('workflows_failoverflow_name')]" },
+          "functionsAppName": { "value": "[parameters('functionsAppName')]" },
+          "functionsAppProject": { "value": "[parameters('functionsAppProject')]" },
+          "streamingjobs_tmstatus_stream_name": { "value": "[parameters('streamingjobs_tmstatus_stream_name')]" }
         }
       }
     },
@@ -181,6 +195,12 @@
         "templateLink": {
           "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/Deployment/azuredeploypart2.json",
           "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "eventHubName": { "value": "[parameters('eventHubName')]" },
+          "eventHubNamespaceName": { "value": "[parameters('eventHubNamespaceName')]" },
+          "functionsAppName": { "value": "[parameters('functionsAppName')]" },
+          "streamingjobs_tmstatus_stream_name": { "value": "[parameters('streamingjobs_tmstatus_stream_name')]" }
         }
       }
     }
