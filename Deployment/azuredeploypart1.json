@@ -5,9 +5,6 @@
     "tenant_id": {
       "type": "string"
     },
-    "grant_type": {
-      "type": "string"
-    },
     "client_id": {
       "type": "string"
     },
@@ -90,6 +87,7 @@
       "Secondary",
       "Primary"
     ],
+    "grant_type": "client_credentials",
     "sqlDatabaseServiceObjective": "Basic",
     "sqlDatabaseEdition": "Basic",
     "storageAccountid": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
@@ -138,7 +136,7 @@
             "[resourceId('Microsoft.Web/Sites', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]"
           ],
           "properties": {
-            "Project": "[parameters('webAppProject')]"
+            "Project": "[concat('SourceCode/', parameters('webAppProject'))]"
           }
         },
         {
@@ -597,7 +595,7 @@
             "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]"
           ],
           "properties": {
-            "Project": "[parameters('functionsAppProject')]",
+            "Project": "[concat('SourceCode', parameters('functionsAppProject'))]",
             "FunctionDeployName": "[variables('functionsAppName')]",
             "FullAutomatedFailover": 1,
             "SubscriptionId": "[subscription().subscriptionId]",
@@ -611,7 +609,7 @@
             "FailovergroupName": "[parameters('sqlFailoverGroupName')]",
             "WorkflowName": "[parameters('workflows_failoverflow_name')]",
             "tenant_id": "[parameters('tenant_id')]",
-            "grant_type": "[parameters('grant_type')]",
+            "grant_type": "[variables('grant_type')]",
             "client_id": "[parameters('client_id')]",
             "client_secret": "[parameters('client_secret')]",
             "OriginEmailAddress": "[parameters('OriginEmailAddress')]",
