@@ -595,7 +595,7 @@
             "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]"
           ],
           "properties": {
-            "Project": "[concat('SourceCode', parameters('functionsAppProject'))]",
+            "Project": "[concat('SourceCode/', parameters('functionsAppProject'))]",
             "FunctionDeployName": "[variables('functionsAppName')]",
             "FullAutomatedFailover": 1,
             "SubscriptionId": "[subscription().subscriptionId]",
