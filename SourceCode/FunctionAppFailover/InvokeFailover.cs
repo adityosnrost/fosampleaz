@@ -22,7 +22,7 @@ namespace FunctionAppFailover
 {
     public static class InvokeFailover
     {
-        static RestClient client = null; 
+        static RestClient clientRest = null; 
 
         private static string GetBearerToken()
         {
