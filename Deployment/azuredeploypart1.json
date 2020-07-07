@@ -58,7 +58,7 @@
     },
     "webAppProject": {
       "type": "string",
-      "defaultValue": "WebApiDrDemoCS"
+      "defaultValue": "SourceCode/WebApiDrDemoCS"
     },
     "sourceCodeRepositoryURL": {
       "type": "string",
@@ -133,7 +133,7 @@
     },
     "functionsAppProject": {
       "type": "string",
-      "defaultValue": "FunctionAppFailover"
+      "defaultValue": "SourceCode/FunctionAppFailover"
     },
     "streamingjobs_tmstatus_stream_name": {
       "defaultValue": "tmstatus-streamsnfo",
