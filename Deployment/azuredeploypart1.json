@@ -330,34 +330,6 @@
           }
         },
         {
-          "apiVersion": "2019-06-01-preview",
-          "type": "failoverGroups",
-          "name": "[parameters('sqlFailoverGroupName')]",
-          "properties": {
-            "serverName": "[parameters('sqlServerPrimaryName')]",
-            "partnerServers": [
-              {
-                "id": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
-              }
-            ],
-            "readWriteEndpoint": {
-              "failoverPolicy": "Automatic",
-              "failoverWithDataLossGracePeriodMinutes": 60
-            },
-            "readOnlyEndpoint": {
-              "failoverPolicy": "Disabled"
-            },
-            "databases": [
-              "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]"
-            ]
-          },
-          "dependsOn": [
-            "[parameters('sqlServerPrimaryName')]",
-            "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]",
-            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
-          ]
-        },
-        {
           "name": "[parameters('sqlDatabaseName')]",
           "type": "databases",
           "apiVersion": "2019-06-01-preview",
@@ -387,6 +359,34 @@
               }
             }
           ]
+        },
+        {
+          "apiVersion": "2019-06-01-preview",
+          "type": "failoverGroups",
+          "name": "[parameters('sqlFailoverGroupName')]",
+          "dependsOn": [
+            "[parameters('sqlServerPrimaryName')]",
+            "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]",
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
+          ],
+          "properties": {
+            "serverName": "[parameters('sqlServerPrimaryName')]",
+            "partnerServers": [
+              {
+                "id": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
+              }
+            ],
+            "readWriteEndpoint": {
+              "failoverPolicy": "Automatic",
+              "failoverWithDataLossGracePeriodMinutes": 60
+            },
+            "readOnlyEndpoint": {
+              "failoverPolicy": "Disabled"
+            },
+            "databases": [
+              "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]"
+            ]
+          }
         }
       ]
     },
