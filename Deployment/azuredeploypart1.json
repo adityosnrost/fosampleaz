@@ -162,9 +162,9 @@
             "[concat('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]), '/config/appsettings')]"
           ],
           "properties": {
-            "productdbseaEntities": {
-              "value": "[concat('metadata=res://*/ProductDB.csdl|res://*/ProductDB.ssdl|res://*/ProductDB.msl;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';user id=snfoadmin;password=Fomaster2020;MultipleActiveResultSets=True;App=EntityFramework&quot;')]",
-              "type": "Custom"
+            "DefaultConnection": {
+              "value": "[concat('Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';')]",
+              "type": "SQLAzure"
             }
           }
         }
@@ -486,7 +486,7 @@
                   {
                     "name": "EmailTemplate",
                     "type": "string",
-                    "value": "<html>\n<body>\n<p>The Traffic Manager detected failure on the Web frontend <b>@{triggerBody()?['PrimaryWebName']}</b>Â on <b>@{utcNow()} Â (UTC Time)</b>.\nAs such we are failing over to<b> @{triggerBody()?['SecondaryWebName']} </b>automatically.\n</p>\n<p>\nPleaseÂ click <a href=\"@{triggerBody()?['FailoverFunctionURL']}\">this link</a> to initiave the database failover. Alternatively, you may copy and paste the following link in to your browser: <b> @{triggerBody()?['FailoverFunctionURL']}</b>\n</p>\n</body>\n</html>"
+                    "value": "<html>\n<body>\n<p>The Traffic Manager detected failure on the Web frontend <b>@{triggerBody()?['PrimaryWebName']}</b> on <b>@{utcNow()}  (UTC Time)</b>.\nAs such we are failing over to<b> @{triggerBody()?['SecondaryWebName']} </b>automatically.\n</p>\n<p>\nPlease click <a href=\"@{triggerBody()?['FailoverFunctionURL']}\">this link</a> to initiave the database failover. Alternatively, you may copy and paste the following link in to your browser: <b> @{triggerBody()?['FailoverFunctionURL']}</b>\n</p>\n</body>\n</html>"
                   }
                 ]
               }
