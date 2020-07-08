@@ -163,7 +163,7 @@
           ],
           "properties": {
             "DefaultConnection": {
-              "value": "[concat('Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';')]",
+              "value": "[concat('metadata=res://*/ProductDB.csdl|res://*/ProductDB.ssdl|res://*/ProductDB.msl;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';MultipleActiveResultSets=True;App=EntityFramework&quot;')]",
               "type": "SQLAzure"
             }
           }
