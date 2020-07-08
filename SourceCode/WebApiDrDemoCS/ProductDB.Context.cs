@@ -16,7 +16,7 @@ namespace WebApiDrDemoCS
     public partial class productdbseaEntities : DbContext
     {
         public productdbseaEntities()
-            : base("name=productdbseaEntities")
+            : base("name=DefaultConnection")
         {
         }
     
