@@ -1,10 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Deployment",
-    "\\SourceCode",
     "\\SourceCode\\FunctionAppFailover"
   ],
-  "SelectedNode": "\\Deployment\\azuredeploypart1.json",
+  "SelectedNode": "\\SourceCode",
   "PreviewInSolutionExplorer": false
 }

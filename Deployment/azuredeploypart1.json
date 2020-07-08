@@ -265,7 +265,7 @@
       "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[copyIndex()])]",
       "copy": {
         "name": "endpointloop",
-        "count": "[length(variables('webAppLocations'))]"
+        "count": "[length(variables('webAppStage'))]"
       },
       "properties": {
         "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]",
