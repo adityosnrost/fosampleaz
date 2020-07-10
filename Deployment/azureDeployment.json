@@ -699,7 +699,7 @@
             "ResourceGroupName": "[resourceGroup().name]",
             "WEBSITE_NODE_DEFAULT_VERSION": "~10",
             "WEBSITE_CONTENTSHARE": "[variables('functionsAppName')]",
-            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
           }
         },
         {
