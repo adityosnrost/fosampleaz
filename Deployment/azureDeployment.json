@@ -732,6 +732,9 @@
       "apiVersion": "2016-03-01",
       "name": "[parameters('streamingjobs_tmstatus_stream_name')]",
       "location": "[variables('webAppLocations')[0]]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionsAppName'))]"
+      ],
       "properties": {
         "sku": {
           "name": "Standard"

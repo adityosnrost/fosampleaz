@@ -1,10 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Deployment",
     "\\SourceCode",
-    "\\SourceCode\\WebApiDrDemoCS",
     "\\SourceCode\\WebApiDrDemoCS\\Controllers"
   ],
-  "SelectedNode": "\\SourceCode\\WebApiDrDemoCS\\Controllers\\ValuesController.cs",
+  "SelectedNode": "\\Deployment\\azuredeploypart1.json",
   "PreviewInSolutionExplorer": false
 }
