@@ -644,23 +644,11 @@
               "value": "dotnet"
             },
             {
-              "name": "WEBSITE_NODE_DEFAULT_VERSION",
-              "value": "~10"
-            },
-            {
               "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             },
             {
-              "name": "WEBSITE_CONTENTSHARE",
-              "value": "[variables('functionsAppName')]"
-            },
-            {
               "name": "AzureWebJobsStorage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
-            },
-            {
-              "name": "AzureWebJobsDashboard",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             },
             {
@@ -708,7 +696,10 @@
             "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",
-            "ResourceGroupName": "[resourceGroup().name]"
+            "ResourceGroupName": "[resourceGroup().name]",
+            "WEBSITE_NODE_DEFAULT_VERSION": "~10",
+            "WEBSITE_CONTENTSHARE": "[variables('functionsAppName')]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
           }
         },
         {
