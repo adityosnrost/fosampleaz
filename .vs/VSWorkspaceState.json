@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\SourceCode\\FunctionAppFailover"
+    "\\SourceCode",
+    "\\SourceCode\\WebApiDrDemoCS",
+    "\\SourceCode\\WebApiDrDemoCS\\Controllers"
   ],
-  "SelectedNode": "\\SourceCode",
+  "SelectedNode": "\\SourceCode\\WebApiDrDemoCS\\Controllers\\ValuesController.cs",
   "PreviewInSolutionExplorer": false
 }

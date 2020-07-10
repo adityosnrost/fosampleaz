@@ -93,7 +93,8 @@
     "storageAccountid": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
     "storageAccountName": "[concat('azfnstorage',uniqueString(resourceGroup().id))]",
     "functionsAppName": "[concat(toLower(parameters('functionsAppName')),'-',uniqueString(resourceGroup().id))]",
-    "functionHostingPlanName": "[concat(variables('functionsAppName'), '-plan')]"
+    "functionHostingPlanName": "[concat(variables('functionsAppName'), '-plan')]",
+    "singleQout": " ' "
   },
   "resources": [
     {
@@ -163,7 +164,7 @@
           ],
           "properties": {
             "DefaultConnection": {
-              "value": "[concat('metadata=res://*/ProductDB.csdl|res://*/ProductDB.ssdl|res://*/ProductDB.msl;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';MultipleActiveResultSets=True;App=EntityFramework&quot;')]",
+              "value": "[concat('metadata=res://*/ProductDB.csdl|res://*/ProductDB.ssdl|res://*/ProductDB.msl;provider=System.Data.SqlClient;provider connection string=', variables('singleQout') ,'Data Source=tcp:', parameters('sqlFailoverGroupName'), '.database.windows.net', ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';User Id=', parameters('sqlServerAdminUsername'), '@', parameters('sqlFailoverGroupName'), '.database.windows.net', ';Password=', parameters('sqlServerAdminPassword'), ';MultipleActiveResultSets=True;App=EntityFramework', variables('singleQout'))]",
               "type": "Custom"
             }
           }
