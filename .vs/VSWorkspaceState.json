@@ -3,7 +3,7 @@
     "",
     "\\Deployment",
     "\\SourceCode",
-    "\\SourceCode\\WebApiDrDemoCS\\Controllers"
+    "\\SourceCode\\WebApiDrDemoCS"
   ],
   "SelectedNode": "\\Deployment\\azuredeploypart1.json",
   "PreviewInSolutionExplorer": false
