@@ -670,6 +670,10 @@
             {
               "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[variables('functionsAppName')]"
             }
           ]
         }
@@ -713,7 +717,6 @@
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",
             "ResourceGroupName": "[resourceGroup().name]",
-            "WEBSITE_CONTENTSHARE": "[variables('functionsAppName')]",
             "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
           }
         },
