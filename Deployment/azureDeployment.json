@@ -674,6 +674,10 @@
             {
               "name": "WEBSITE_CONTENTSHARE",
               "value": "[variables('functionsAppName')]"
+            },
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             }
           ]
         }
@@ -716,9 +720,8 @@
             "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",
-            "ResourceGroupName": "[resourceGroup().name]",
-            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
-          }
+            "ResourceGroupName": "[resourceGroup().name]"
+           }
         },
         {
           "type": "sourcecontrols",
