@@ -720,8 +720,16 @@
             "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",
-            "ResourceGroupName": "[resourceGroup().name]"
-           }
+            "ResourceGroupName": "[resourceGroup().name]",
+            "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+            "FUNCTIONS_EXTENSION_VERSION": "~2",
+            "WEBSITE_NODE_DEFAULT_VERSION": "~10",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "WEBSITE_CONTENTSHARE": "[variables('functionsAppName')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+            "StorageConnection": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+          }
         },
         {
           "type": "sourcecontrols",
