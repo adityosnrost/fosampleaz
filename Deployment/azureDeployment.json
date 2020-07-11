@@ -315,32 +315,33 @@
       }
     },
     {
-      "apiVersion": "2015-11-01",
       "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+      "apiVersion": "2015-11-01",
+      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[1])]",
+      "location": "global",
       "dependsOn": [
         "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
         "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[1])]"
       ],
-      "location": "global",
-      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[1])]",
       "properties": {
         "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[1]))]",
-        "endpointStatus": "Enabled"
+        "endpointStatus": "Enabled",
+        "priority": 1
       }
     },
     {
-      "apiVersion": "2015-11-01",
       "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+      "apiVersion": "2015-11-01",
+      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]",
+      "location": "global",
       "dependsOn": [
         "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
-        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[0])]",
-        "[concat('Microsoft.Network/trafficManagerProfiles/azureEndpoints/', parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]"
+        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[0])]"
       ],
-      "location": "global",
-      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]",
       "properties": {
         "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[0]))]",
-        "endpointStatus": "Enabled"
+        "endpointStatus": "Enabled",
+        "priority": 2
       }
     },
     {
@@ -661,6 +662,14 @@
             {
               "name": "StorageConnection",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "~10"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             }
           ]
         }
@@ -704,8 +713,6 @@
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",
             "ResourceGroupName": "[resourceGroup().name]",
-            "WEBSITE_NODE_DEFAULT_VERSION": "~10",
-            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
             "WEBSITE_CONTENTSHARE": "[variables('functionsAppName')]",
             "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
           }
