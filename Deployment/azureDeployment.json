@@ -319,16 +319,27 @@
       "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
       "dependsOn": [
         "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
-        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[copyIndex()])]"
+        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[1])]"
       ],
       "location": "global",
-      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[copyIndex()])]",
-      "copy": {
-        "name": "endpointloop",
-        "count": "[length(variables('webAppStage'))]"
-      },
+      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[1])]",
       "properties": {
-        "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]",
+        "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[1]))]",
+        "endpointStatus": "Enabled"
+      }
+    },
+    {
+      "apiVersion": "2015-11-01",
+      "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+      "dependsOn": [
+        "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
+        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[0])]",
+        "[concat('Microsoft.Network/trafficManagerProfiles/azureEndpoints/', parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]"
+      ],
+      "location": "global",
+      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]",
+      "properties": {
+        "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[0]))]",
         "endpointStatus": "Enabled"
       }
     },
