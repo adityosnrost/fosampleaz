@@ -150,7 +150,7 @@ namespace FunctionAppFailover
             {
                 bool isEmailInterval = await GetEmailInvocationInterval(token);
 
-                string failoverActionType = Environment.GetEnvironmentVariable("EnvironmentTriggerFailoverVariable");
+                string failoverActionType = Environment.GetEnvironmentVariable("FullAutomatedFailover");
                 if (failoverActionType == "1")
                 {
                     actionResult = await TriggerFailover(token);
