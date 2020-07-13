@@ -503,7 +503,7 @@
         "displayName": "[parameters('connections_office365_name')]",
         "customParameterValues": {},
         "api": {
-          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/eastus/managedApis/office365')]"
+          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', variables('webAppLocations')[0], '/managedApis/office365')]"
         }
       }
     },
@@ -599,7 +599,7 @@
               "office365": {
                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
                 "connectionName": "parameters('connections_office365_name')",
-                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/eastus/managedApis/office365')]"
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', variables('webAppLocations')[0], '/managedApis/office365')]"
               }
             }
           }
