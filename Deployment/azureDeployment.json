@@ -573,7 +573,7 @@
                 "body": {
                   "Body": "<p>@{variables('EmailTemplate')}</p>",
                   "Subject": "System down: Database Failover need to be approved",
-                  "To": "adityosn@hotmail.com; welyl@microsoft.com"
+                  "To": "parameters('TargetEmailAddress')"
                 },
                 "host": {
                   "connection": {
