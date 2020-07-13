@@ -17,6 +17,12 @@
     "TargetEmailAddress": {
       "type": "string"
     },
+    "webAppLocationsPrimary": {
+      "type": "String"
+    },
+    "webAppLocationsSecondary": {
+      "type": "String"
+    },
     "eventHubName": {
       "type": "string",
       "defaultValue": "[toLower(concat('foevhub', uniqueString(resourceGroup().id)))]",
@@ -139,8 +145,8 @@
   },
   "variables": {
     "webAppLocations": [
-      "East US",
-      "Southeast Asia"
+      "[parameters('webAppLocationsSecondary')]",
+      "[parameters('webAppLocationsPrimary')]"
     ],
     "webAppStage": [
       "Secondary",
@@ -234,7 +240,7 @@
       "type": "Microsoft.EventHub/namespaces",
       "apiVersion": "2018-01-01-preview",
       "name": "[parameters('eventHubNamespaceName')]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "sku": {
         "name": "Basic",
         "tier": "Basic",
@@ -251,7 +257,7 @@
       "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
       "apiVersion": "2017-04-01",
       "name": "[concat(parameters('eventHubNamespaceName'), '/RootManageSharedAccessKey')]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
       ],
@@ -267,7 +273,7 @@
       "type": "Microsoft.EventHub/namespaces/eventhubs",
       "apiVersion": "2017-04-01",
       "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'))]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
       ],
@@ -281,7 +287,7 @@
       "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
       "apiVersion": "2017-04-01",
       "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'), '/PreviewDataPolicy')]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('eventHubName'))]",
         "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
@@ -348,7 +354,7 @@
       "type": "Microsoft.Network/trafficManagerProfiles/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
       "name": "[concat(parameters('trafficManagerName'),'/microsoft.insights/', parameters('diagnosticLogName'))]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
         "[concat('Microsoft.EventHub/namespaces/', parameters('eventHubNamespaceName'))]"
@@ -492,7 +498,7 @@
       "type": "Microsoft.Web/connections",
       "apiVersion": "2016-06-01",
       "name": "[parameters('connections_office365_name')]",
-      "location": "eastus",
+      "location": "[variables('webAppLocations')[0]]",
       "properties": {
         "displayName": "[parameters('connections_office365_name')]",
         "customParameterValues": {},
@@ -505,7 +511,7 @@
       "type": "Microsoft.Logic/workflows",
       "apiVersion": "2017-07-01",
       "name": "[parameters('workflows_failoverflow_name')]",
-      "location": "eastus",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]"
       ],
