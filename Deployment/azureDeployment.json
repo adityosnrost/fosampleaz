@@ -449,8 +449,7 @@
               }
             ],
             "readWriteEndpoint": {
-              "failoverPolicy": "Automatic",
-              "failoverWithDataLossGracePeriodMinutes": 60
+              "failoverPolicy": "Manual"
             },
             "readOnlyEndpoint": {
               "failoverPolicy": "Disabled"

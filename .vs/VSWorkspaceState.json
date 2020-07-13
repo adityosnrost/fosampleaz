@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Deployment",
     "\\SourceCode",
     "\\SourceCode\\WebApiDrDemoCS"
   ],
-  "SelectedNode": "\\Deployment\\azuredeploypart1.json",
+  "SelectedNode": "\\Deployment",
   "PreviewInSolutionExplorer": false
 }
