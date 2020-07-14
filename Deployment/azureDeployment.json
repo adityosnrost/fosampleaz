@@ -487,6 +487,7 @@
           "dependsOn": [
             "[parameters('sqlServerPrimaryName')]",
             "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]",
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerPrimaryName'), '/databases/', parameters('sqlDatabaseName'), '/extensions/Import')]",
             "[resourceId('Microsoft.Sql/servers', parameters('sqlServerSecondaryName'))]"
           ],
           "properties": {
