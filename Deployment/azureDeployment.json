@@ -345,6 +345,10 @@
       "type": "Microsoft.Network/trafficManagerProfiles",
       "name": "[parameters('trafficManagerName')]",
       "location": "global",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[0])]",
+        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[1])]"
+      ],
       "properties": {
         "profileStatus": "Enabled",
         "trafficRoutingMethod": "Priority",
@@ -359,37 +363,25 @@
           "intervalInSeconds": 10,
           "timeoutInSeconds": 5,
           "toleratedNumberOfFailures": 3
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
-      "apiVersion": "2018-04-01",
-      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[1])]",
-      "location": "global",
-      "dependsOn": [
-        "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
-        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[1])]"
-      ],
-      "properties": {
-        "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[1]))]",
-        "endpointStatus": "Enabled",
-        "priority": 1
-      }
-    },
-    {
-      "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
-      "apiVersion": "2018-04-01",
-      "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]",
-      "location": "global",
-      "dependsOn": [
-        "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
-        "[concat('Microsoft.Web/sites/', parameters('webAppName'), variables('webAppStage')[0])]"
-      ],
-      "properties": {
-        "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[0]))]",
-        "endpointStatus": "Enabled",
-        "priority": 2
+        },
+        "endpoints": [
+          {
+            "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[1])]",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[1]))]",
+              "endpointStatus": "Enabled",
+              "priority": 1
+            }
+          },
+          {
+            "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[0]))]",
+              "endpointStatus": "Enabled",
+              "priority": 2
+            }
+          }
+        ]
       }
     },
     {
