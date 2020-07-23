@@ -367,6 +367,7 @@
         "endpoints": [
           {
             "name": "[concat('endpoint', variables('webAppStage')[1])]",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
             "properties": {
               "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[1]))]",
               "endpointStatus": "Enabled",
@@ -375,6 +376,7 @@
           },
           {
             "name": "[concat('endpoint', variables('webAppStage')[0])]",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
             "properties": {
               "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[0]))]",
               "endpointStatus": "Enabled",
