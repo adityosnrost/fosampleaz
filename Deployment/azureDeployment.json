@@ -352,10 +352,6 @@
       "properties": {
         "profileStatus": "Enabled",
         "trafficRoutingMethod": "Priority",
-        "dnsConfig": {
-          "relativeName": "[parameters('trafficManagerName')]",
-          "ttl": 30
-        },
         "monitorConfig": {
           "protocol": "HTTP",
           "port": 80,
