@@ -366,7 +366,7 @@
         },
         "endpoints": [
           {
-            "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[1])]",
+            "name": "[concat('endpoint', variables('webAppStage')[1])]",
             "properties": {
               "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[1]))]",
               "endpointStatus": "Enabled",
@@ -374,7 +374,7 @@
             }
           },
           {
-            "name": "[concat(parameters('trafficManagerName'), '/Endpoint', variables('webAppStage')[0])]",
+            "name": "[concat('endpoint', variables('webAppStage')[0])]",
             "properties": {
               "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('webAppName'), variables('webAppStage')[0]))]",
               "endpointStatus": "Enabled",
