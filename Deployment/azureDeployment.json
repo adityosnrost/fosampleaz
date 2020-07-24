@@ -776,7 +776,10 @@
       "name": "[parameters('streamingjobs_tmstatus_stream_name')]",
       "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', variables('functionsAppName'))]"
+        "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('functionsAppName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('eventHubName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', parameters('eventHubNamespaceName'), parameters('eventHubName'), , 'PreviewDataPolicy')]"
       ],
       "properties": {
         "sku": {
