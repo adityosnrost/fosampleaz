@@ -1,0 +1,261 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "tenant_id": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+      "type": "string"
+    },
+    "OriginEmailAddress": {
+      "type": "string"
+    },
+    "TargetEmailAddress": {
+      "type": "string"
+    },
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('foevhub', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "The name of the event hub."
+      }
+    },
+    "eventHubNamespaceName": {
+      "type": "string",
+      "defaultValue": "[concat('foevhubnamespace', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "The name of the Event Hubs namespace."
+      }
+    },
+    "eventhubAuthorizationRuleName": {
+      "type": "string",
+      "defaultValue": "RootManageSharedAccessKey",
+      "metadata": {
+        "description": "Name of Namespace Authorization Rule."
+      }
+    },
+    "trafficManagerName": {
+      "defaultValue": "[toLower(concat('traffsasnfo', uniqueString(resourceGroup().id)))]",
+      "type": "String"
+    },
+    "diagnosticLogName": {
+      "defaultValue": "[toLower(concat('diagsnfosam', uniqueString(resourceGroup().id)))]",
+      "type": "String"
+    },
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('snwebfosamid', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "Relative DNS name for the WebApps, must be globally unique.  An index will be appended for each Web App."
+      }
+    },
+    "webAppProject": {
+      "type": "string",
+      "defaultValue": "WebApiDrDemoCS"
+    },
+    "sourceCodeRepositoryURL": {
+      "type": "string",
+      "defaultValue": "https://github.com/[your-github-username]/fosampleaz.git",
+      "metadata": {
+        "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork. If you are using your own fork, you may see an error in deployment related to GitHub auth. We require this for your own good, as we may update and break your application or testing as we deploy new updates to the public samples repository."
+      }
+    },
+    "sourceCodeBranch": {
+      "type": "string",
+      "defaultValue": "master",
+      "metadata": {
+        "description": "Sourcecode Repo branch. This should be set to Master for the public sample. You can adjust this to point to your own fork branch as recommended"
+      }
+    },
+    "sqlServerPrimaryName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('primsofosamsn', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "The name of the primary SQL Server."
+      }
+    },
+    "sqlServerSecondaryName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('secosofosamsn', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "The name of the secondary SQL Server."
+      }
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('productdbfosam', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "The name of the database."
+      }
+    },
+    "sqlServerAdminUsername": {
+      "type": "string",
+      "defaultValue": "snfoadmin",
+      "metadata": {
+        "description": "The administrator username of the primary SQL Server."
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "Fomaster2020",
+      "metadata": {
+        "description": "The administrator password of the primary SQL Server."
+      }
+    },
+    "sqlFailoverGroupName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('sofogrousnam', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "The name of the failover group."
+      }
+    },
+    "connections_office365_name": {
+      "defaultValue": "[toLower(concat('office365fosample', uniqueString(resourceGroup().id)))]",
+      "type": "String"
+    },
+    "workflows_failoverflow_name": {
+      "defaultValue": "[toLower(concat('failoverflow', uniqueString(resourceGroup().id)))]",
+      "type": "String"
+    },
+    "functionsAppName": {
+      "type": "string",
+      "defaultValue": "[toLower(concat('failoverfuncsample', uniqueString(resourceGroup().id)))]",
+      "metadata": {
+        "description": "The name of the Function application to be deployed. The name will automatically be made unique on deployment, all lowercase letters or numbers with no spaces."
+      }
+    },
+    "functionsAppProject": {
+      "type": "string",
+      "defaultValue": "FunctionAppFailover"
+    },
+    "streamingjobs_tmstatus_stream_name": {
+      "defaultValue": "[toLower(concat('tmstatus-streamsnfo', uniqueString(resourceGroup().id)))]",
+      "type": "String"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "templatePart1",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/Deployment/azuredeploypart1.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "tenant_id": {
+            "value": "[parameters('tenant_id')]"
+          },
+          "client_id": {
+            "value": "[parameters('client_id')]"
+          },
+          "client_secret": {
+            "value": "[parameters('client_secret')]"
+          },
+          "OriginEmailAddress": {
+            "value": "[parameters('OriginEmailAddress')]"
+          },
+          "TargetEmailAddress": {
+            "value": "[parameters('TargetEmailAddress')]"
+          },
+          "eventHubName": {
+            "value": "[parameters('eventHubName')]"
+          },
+          "eventHubNamespaceName": {
+            "value": "[parameters('eventHubNamespaceName')]"
+          },
+          "eventhubAuthorizationRuleName": {
+            "value": "[parameters('eventhubAuthorizationRuleName')]"
+          },
+          "trafficManagerName": {
+            "value": "[parameters('trafficManagerName')]"
+          },
+          "diagnosticLogName": {
+            "value": "[parameters('diagnosticLogName')]"
+          },
+          "webAppName": {
+            "value": "[parameters('webAppName')]"
+          },
+          "webAppProject": {
+            "value": "[parameters('webAppProject')]"
+          },
+          "sourceCodeRepositoryURL": {
+            "value": "[parameters('sourceCodeRepositoryURL')]"
+          },
+          "sourceCodeBranch": {
+            "value": "[parameters('sourceCodeBranch')]"
+          },
+          "sqlServerPrimaryName": {
+            "value": "[parameters('sqlServerPrimaryName')]"
+          },
+          "sqlServerSecondaryName": {
+            "value": "[parameters('sqlServerSecondaryName')]"
+          },
+          "sqlDatabaseName": {
+            "value": "[parameters('sqlDatabaseName')]"
+          },
+          "sqlServerAdminUsername": {
+            "value": "[parameters('sqlServerAdminUsername')]"
+          },
+          "sqlServerAdminPassword": {
+            "value": "[parameters('sqlServerAdminPassword')]"
+          },
+          "sqlFailoverGroupName": {
+            "value": "[parameters('sqlFailoverGroupName')]"
+          },
+          "connections_office365_name": {
+            "value": "[parameters('connections_office365_name')]"
+          },
+          "workflows_failoverflow_name": {
+            "value": "[parameters('workflows_failoverflow_name')]"
+          },
+          "functionsAppName": {
+            "value": "[parameters('functionsAppName')]"
+          },
+          "functionsAppProject": {
+            "value": "[parameters('functionsAppProject')]"
+          },
+          "streamingjobs_tmstatus_stream_name": {
+            "value": "[parameters('streamingjobs_tmstatus_stream_name')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "templatePart2",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments','templatePart1')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/adityosnrost/fosampleaz/master/Deployment/azuredeploypart2.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "eventHubName": {
+            "value": "[parameters('eventHubName')]"
+          },
+          "eventHubNamespaceName": {
+            "value": "[parameters('eventHubNamespaceName')]"
+          },
+          "functionsAppName": {
+            "value": "[parameters('functionsAppName')]"
+          },
+          "streamingjobs_tmstatus_stream_name": {
+            "value": "[parameters('streamingjobs_tmstatus_stream_name')]"
+          }
+        }
+      }
+    }
+  ]
+}
