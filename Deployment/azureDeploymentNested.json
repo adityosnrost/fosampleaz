@@ -272,9 +272,6 @@
           },
           "functionsAppProject": {
             "value": "[parameters('functionsAppProject')]"
-          },
-          "streamingjobs_tmstatus_stream_name": {
-            "value": "[parameters('streamingjobs_tmstatus_stream_name')]"
           }
         }
       }
