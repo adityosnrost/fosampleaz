@@ -256,7 +256,7 @@
       }
     },
     {
-      "apiVersion": "2015-11-01",
+      "apiVersion": "2018-04-01",
       "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
       "dependsOn": [
         "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
