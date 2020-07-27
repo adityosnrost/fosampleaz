@@ -2,6 +2,54 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "RegionSecondary": {
+      "type": "string",
+      "allowedValues": [
+        "East Asia",
+        "Southeast Asia",
+        "Central US",
+        "East US",
+        "East US 2",
+        "West US",
+        "North Central US",
+        "South Central US",
+        "North Europe",
+        "West Europe",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast",
+        "South India",
+        "Central India",
+        "West India",
+        "Canada Central",
+        "Canada East",
+        "UK South",
+        "UK West",
+        "West Central US",
+        "West US 2",
+        "Korea Central",
+        "Korea South",
+        "France Central",
+        "France South",
+        "Australia Central",
+        "Australia Central 2",
+        "UAE Central",
+        "UAE North",
+        "South Africa North",
+        "South Africa West",
+        "Switzerland North",
+        "Switzerland West",
+        "Germany North",
+        "Germany West Central",
+        "Norway West",
+        "Norway East"
+      ],
+      "metadata": {
+        "description": "Locations"
+      }
+    },
     "tenant_id": {
       "type": "string"
     },
@@ -150,6 +198,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "RegionSecondary": {
+            "value": "[parameters('RegionSecondary')]"
+          },
           "tenant_id": {
             "value": "[parameters('tenant_id')]"
           },
@@ -242,6 +293,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "RegionSecondary": {
+            "value": "[parameters('RegionSecondary')]"
+          },
           "eventHubName": {
             "value": "[parameters('eventHubName')]"
           },

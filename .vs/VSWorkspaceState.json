@@ -1,8 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Deployment"
+    "\\Deployment",
+    "\\SourceCode",
+    "\\SourceCode\\FunctionAppFailover",
+    "\\SourceCode\\WebApiDrDemoCS"
   ],
-  "SelectedNode": "\\Deployment\\fodbscript.sql",
+  "SelectedNode": "\\Deployment\\azureDeployment.json",
   "PreviewInSolutionExplorer": false
 }

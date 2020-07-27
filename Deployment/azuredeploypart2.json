@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "RegionSecondary": {
+      "type": "string"
+    },
     "eventHubName": {
       "type": "string"
     },
@@ -17,8 +20,8 @@
   },
   "variables": {
     "webAppLocations": [
-      "East US",
-      "Southeast Asia"
+      "[parameters('RegionSecondary')]",
+      "[resourceGroup().location]"
     ],
     "webAppStage": [
       "Secondary",

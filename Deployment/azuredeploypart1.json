@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "RegionSecondary": {
+      "type": "string"
+    },
     "tenant_id": {
       "type": "string"
     },
@@ -73,15 +76,12 @@
     },
     "functionsAppProject": {
       "type": "string"
-    },
-    "streamingjobs_tmstatus_stream_name": {
-      "type": "String"
     }
   },
   "variables": {
     "webAppLocations": [
-      "East US",
-      "Southeast Asia"
+      "[parameters('RegionSecondary')]",
+      "[resourceGroup().location]"
     ],
     "webAppStage": [
       "Secondary",
@@ -175,7 +175,7 @@
       "type": "Microsoft.EventHub/namespaces",
       "apiVersion": "2018-01-01-preview",
       "name": "[parameters('eventHubNamespaceName')]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "sku": {
         "name": "Basic",
         "tier": "Basic",
@@ -192,7 +192,7 @@
       "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
       "apiVersion": "2017-04-01",
       "name": "[concat(parameters('eventHubNamespaceName'), '/RootManageSharedAccessKey')]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
       ],
@@ -208,7 +208,7 @@
       "type": "Microsoft.EventHub/namespaces/eventhubs",
       "apiVersion": "2017-04-01",
       "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'))]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
       ],
@@ -222,7 +222,7 @@
       "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
       "apiVersion": "2017-04-01",
       "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'), '/PreviewDataPolicy')]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('eventHubName'))]",
         "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
@@ -277,7 +277,7 @@
       "type": "Microsoft.Network/trafficManagerProfiles/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
       "name": "[concat(parameters('trafficManagerName'),'/microsoft.insights/', parameters('diagnosticLogName'))]",
-      "location": "East US",
+      "location": "[variables('webAppLocations')[0]]",
       "dependsOn": [
         "[concat('Microsoft.Network/trafficManagerProfiles/', parameters('trafficManagerName'))]",
         "[concat('Microsoft.EventHub/namespaces/', parameters('eventHubNamespaceName'))]"
@@ -341,25 +341,7 @@
           "properties": {
             "edition": "[variables('sqlDatabaseEdition')]",
             "requestedServiceObjectiveName": "[variables('sqlDatabaseServiceObjective')]"
-          },
-          "resources": [
-            {
-              "type": "extensions",
-              "apiVersion": "2014-04-01",
-              "name": "Import",
-              "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerPrimaryName'), parameters('sqlDatabaseName'))]"
-              ],
-              "properties": {
-                "storageKeyType": "StorageAccessKey",
-                "storageKey": "KtLfSIYWJvLhv16yiwAkE21a5wcKdtqCv579/1rXL0ZNkJ+Ou+21fxt9gksYJHWw13Ihx0Vrx7mUncPyZHT/gw==",
-                "storageUri": "https://foassetmanage.blob.core.windows.net/databasefo/productdb.bacpac",
-                "administratorLogin": "[parameters('sqlServerAdminUsername')]",
-                "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
-                "operationMode": "Import"
-              }
-            }
-          ]
+          }
         },
         {
           "apiVersion": "2019-06-01-preview",
@@ -378,8 +360,7 @@
               }
             ],
             "readWriteEndpoint": {
-              "failoverPolicy": "Automatic",
-              "failoverWithDataLossGracePeriodMinutes": 60
+              "failoverPolicy": "Manual"
             },
             "readOnlyEndpoint": {
               "failoverPolicy": "Disabled"
@@ -427,7 +408,7 @@
         "displayName": "[parameters('connections_office365_name')]",
         "customParameterValues": {},
         "api": {
-          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/eastus/managedApis/office365')]"
+          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', variables('webAppLocations')[0], '/managedApis/office365')]"
         }
       }
     },
@@ -503,7 +484,7 @@
                 "body": {
                   "Body": "<p>@{variables('EmailTemplate')}</p>",
                   "Subject": "System down: Database Failover need to be approved",
-                  "To": "adityosn@hotmail.com; welyl@microsoft.com"
+                  "To": "parameters('TargetEmailAddress')"
                 },
                 "host": {
                   "connection": {
@@ -523,7 +504,7 @@
               "office365": {
                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
                 "connectionName": "parameters('connections_office365_name')",
-                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/eastus/managedApis/office365')]"
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', variables('webAppLocations')[0], '/managedApis/office365')]"
               }
             }
           }
