@@ -521,7 +521,7 @@
         "displayName": "[parameters('connections_office365_name')]",
         "customParameterValues": {},
         "api": {
-          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', toLower(replace(parameters(variables('webAppLocations')[0]),' ', '')), '/managedApis/office365')]"
+          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', variables('webAppLocations')[0], '/managedApis/office365')]"
         }
       }
     },
