@@ -3,9 +3,8 @@
     "",
     "\\Deployment",
     "\\SourceCode",
-    "\\SourceCode\\FunctionAppFailover",
     "\\SourceCode\\WebApiDrDemoCS"
   ],
-  "SelectedNode": "\\Deployment\\azuredeploypart2.json",
+  "SelectedNode": "\\SourceCode\\.gitignore",
   "PreviewInSolutionExplorer": false
 }
