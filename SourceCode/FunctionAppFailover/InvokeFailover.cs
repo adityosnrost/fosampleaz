@@ -84,10 +84,7 @@ namespace FunctionAppFailover
 
         private static async Task<string> TriggerSendEmail(string token)
         {
-            string functionKey = await GetFailoverKey(token);
-
             var postBody = (dynamic)new JsonObject();
-            postBody.FailoverFunctionURL = Environment.GetEnvironmentVariable("InvokeFailoverFunctionURL") + functionKey.ToString();
             postBody.PrimaryWebName = Environment.GetEnvironmentVariable("PrimaryWebName");
             postBody.SecondaryWebName = Environment.GetEnvironmentVariable("SecondaryWebName");
 
