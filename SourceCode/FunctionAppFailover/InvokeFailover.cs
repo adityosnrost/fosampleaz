@@ -82,6 +82,45 @@ namespace FunctionAppFailover
             return response.Content.ReadAsStringAsync().Result.ToString();
         }
 
+        private static async Task<string> TriggerSendEmail(string token)
+        {
+            string functionKey = await GetFailoverKey(token);
+
+            var postBody = (dynamic)new JsonObject();
+            postBody.FailoverFunctionURL = Environment.GetEnvironmentVariable("InvokeFailoverFunctionURL") + functionKey.ToString();
+            postBody.PrimaryWebName = Environment.GetEnvironmentVariable("PrimaryWebName");
+            postBody.SecondaryWebName = Environment.GetEnvironmentVariable("SecondaryWebName");
+
+            var client2 = new HttpClient();
+            var content = new StringContent(postBody.ToString(), Encoding.UTF8, "application/json");
+            var result = await client2.PostAsync(Environment.GetEnvironmentVariable("SendNotifLogicURL"), content);
+
+            return "Email has sent successfully";
+        }
+
+        private static async Task<bool> GetEmailInvocationInterval(string token)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://management.azure.com/subscriptions/" + Environment.GetEnvironmentVariable("SubscriptionId") + "/resourceGroups/" + Environment.GetEnvironmentVariable("ResourceGroupName") + "/providers/Microsoft.Logic/workflows/" + Environment.GetEnvironmentVariable("WorkflowNameFoNotif") + "/runs?api-version=2016-06-01&$top=1&$filter=startTime ge " + DateTime.UtcNow.AddMinutes(-int.Parse(Environment.GetEnvironmentVariable("InvokeInterval"))).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"));
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            request.Headers.Add("Authorization", "Bearer " + token);
+            var response = await client.SendAsync(request);
+
+            dynamic responseContent = await response.Content.ReadAsAsync<object>();
+            JArray rowsResult = responseContent.value;
+
+            if(rowsResult.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
+
         [FunctionName("InvokeFailover")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
@@ -103,6 +142,12 @@ namespace FunctionAppFailover
             string token = GetBearerToken();
             string actionResult;
             actionResult = await TriggerFailover(token, name);
+
+            bool isEmailInterval = await GetEmailInvocationInterval(token);
+            if (isEmailInterval == false)
+            {
+                actionResult = await TriggerSendEmail(token);
+            }
 
             return new OkObjectResult(actionResult);
         }

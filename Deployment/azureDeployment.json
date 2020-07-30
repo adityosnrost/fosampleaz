@@ -635,6 +635,105 @@
       }
     },
     {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2017-07-01",
+      "name": "[concat(parameters('workflows_failoverflow_name'), 'notiffo')]",
+      "location": "[variables('webAppLocations')[0]]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]"
+      ],
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "method": "POST",
+                "schema": {
+                  "properties": {
+                    "address": {
+                      "properties": {
+                        "FailoverFunctionURL": {
+                          "type": "string"
+                        },
+                        "PrimaryWebName": {
+                          "type": "string"
+                        },
+                        "SecondaryWebName": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "actions": {
+            "Initialize_variable": {
+              "runAfter": {},
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "EmailTemplate",
+                    "type": "string",
+                    "value": "<html>\n<body>\n<p>The Traffic Manager detected failure on the Web frontend <b>@{triggerBody()?['PrimaryWebName']}</b> on <b>@{utcNow()}  (UTC Time)</b>.\nAs such we are failing over to<b> @{triggerBody()?['SecondaryWebName']} </b>automatically.\n Database Failover has successfully triggered. Please check on Azure portal to see more detail.</html>"
+                  }
+                ]
+              }
+            },
+            "Send_an_email_(V2)": {
+              "runAfter": {
+                "Initialize_variable": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "Body": "<p>@{variables('EmailTemplate')}</p>",
+                  "Subject": "System down: Database Failover is successfully triggered",
+                  "To": "[parameters('TargetEmailAddress')]"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['office365']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/v2/Mail"
+              }
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "office365": {
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                "connectionName": "[parameters('connections_office365_name')]",
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', toLower(replace(variables('webAppLocations')[0],' ', '')), '/managedApis/office365')]"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
       "apiVersion": "2016-01-01",
@@ -673,7 +772,8 @@
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Web/serverfarms', variables('functionHostingPlanName'))]",
-        "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]"
+        "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]",
+        "[resourceId('Microsoft.Logic/workflows', concat(parameters('workflows_failoverflow_name'), 'notiffo'))]"
       ],
       "kind": "functionapp",
       "properties": {
@@ -725,7 +825,8 @@
             "[resourceId('Microsoft.Web/serverfarms', variables('functionHostingPlanName'))]",
             "[resourceId('Microsoft.Web/Sites', variables('functionsAppName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-            "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]"
+            "[resourceId('Microsoft.Logic/workflows', parameters('workflows_failoverflow_name'))]",
+            "[resourceId('Microsoft.Logic/workflows', concat(parameters('workflows_failoverflow_name'), 'notiffo'))]"
           ],
           "properties": {
             "Project": "[concat('SourceCode/', parameters('functionsAppProject'))]",
@@ -741,6 +842,7 @@
             "DBName": "[parameters('sqlDatabaseName')]",
             "FailovergroupName": "[parameters('sqlFailoverGroupName')]",
             "WorkflowName": "[parameters('workflows_failoverflow_name')]",
+            "WorkflowNameFoNotif": "[concat(parameters('workflows_failoverflow_name'), 'notiffo')]",
             "tenant_id": "[parameters('tenant_id')]",
             "grant_type": "[variables('grant_type')]",
             "client_id": "[parameters('client_id')]",
@@ -751,6 +853,7 @@
             "EnvironmentTriggerFailoverVariable": "FullAutomatedFailover",
             "InvokeInterval": 30,
             "SendEmailLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', parameters('workflows_failoverflow_name'), 'manual'), '2019-05-01').value]",
+            "SendNotifLogicURL": "[listCallbackURL(resourceId('Microsoft.Logic/workflows/triggers', concat(parameters('workflows_failoverflow_name'), 'notiffo'), 'manual'), '2019-05-01').value]",
             "InvokeFailoverFunctionURL": "[concat('http://', variables('functionsAppName'), '.azurewebsites.net/api/InvokeFailover?code=')]",
             "ResourceGroupID": "[resourceGroup().id]",
             "ResourceGroupName": "[resourceGroup().name]",
