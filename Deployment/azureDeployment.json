@@ -616,7 +616,7 @@
             "value": {
               "office365": {
                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
-                "connectionName": "parameters('connections_office365_name')",
+                "connectionName": "[parameters('connections_office365_name')]",
                 "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', toLower(replace(variables('webAppLocations')[0],' ', '')), '/managedApis/office365')]"
               }
             }
