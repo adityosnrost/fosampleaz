@@ -597,7 +597,7 @@
                 "body": {
                   "Body": "<p>@{variables('EmailTemplate')}</p>",
                   "Subject": "System down: Database Failover need to be approved",
-                  "To": "parameters('TargetEmailAddress')"
+                  "To": "[parameters('TargetEmailAddress')]"
                 },
                 "host": {
                   "connection": {
