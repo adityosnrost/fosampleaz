@@ -591,7 +591,7 @@
                   {
                     "name": "EmailTemplate",
                     "type": "string",
-                    "value": "<html>\n<body>\n<p>The Traffic Manager detected failure on the Web frontend <b>@{triggerBody()?['PrimaryWebName']}</b> on <b>@{utcNow()}  (UTC Time)</b>.\nAs such we are failing over to<b> @{triggerBody()?['SecondaryWebName']} </b>automatically.\n</p>\n<p>\nPlease click <a href=\"@{triggerBody()?['FailoverFunctionURL']}\">this link</a> to initiave the database failover. Alternatively, you may copy and paste the following link in to your browser: <b> @{triggerBody()?['FailoverFunctionURL']}</b>\n</p>\n</body>\n</html>"
+                    "value": "<html>\n<body>\n<p>The Traffic Manager detected failure on the Web frontend <b>@{triggerBody()?['PrimaryWebName']}</b> on <b>@{utcNow()}  (UTC Time)</b>.\nAs such we are failing over to<b> @{triggerBody()?['SecondaryWebName']} </b>automatically.\n</p>\n<p>\nPlease click <a href=\"@{triggerBody()?['FailoverFunctionURL']}\">this link</a> to initiave the database failover. Alternatively, you may copy and paste the following link in to your browser: <b> @{triggerBody()?['FailoverFunctionURL']}</b>\n</p>\n</body>\n</html>"
                   }
                 ]
               }

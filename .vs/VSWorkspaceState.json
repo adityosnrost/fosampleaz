@@ -3,8 +3,9 @@
     "",
     "\\Deployment",
     "\\SourceCode",
+    "\\SourceCode\\FunctionAppFailover",
     "\\SourceCode\\WebApiDrDemoCS"
   ],
-  "SelectedNode": "\\SourceCode\\.gitignore",
+  "SelectedNode": "\\SourceCode\\FunctionAppFailover\\AlertFailoverAction.cs",
   "PreviewInSolutionExplorer": false
 }
