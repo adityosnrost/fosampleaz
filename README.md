@@ -40,6 +40,13 @@ Click below button to automatically deploy your instances using Azure ARM Templa
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
+New button
+
+<a href="https://azuredeploy.net/
+   repository=."
+   target="_blank">
+   <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
 
 Add those info / keys (**tenant_id, grant_type, client_id, client_secret**) that we got from ealier to your deployment paramter. They are primarily used as authorization keys to perform Database Failover programmatically thru our Azure Functions.
 
