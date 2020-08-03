@@ -43,7 +43,7 @@ Click below button to automatically deploy your instances using Azure ARM Templa
 New button
 
 <a href="https://azuredeploy.net/
-   repository=https://github.com/wely/fosampleaz/"
+   repository=https://github.com/wely/fosampleaz"
    target="_blank">
    <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
