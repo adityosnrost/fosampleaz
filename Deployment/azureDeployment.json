@@ -51,19 +51,34 @@
       }
     },
     "tenant_id": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "tenant_id which you acquired in previous step"
+      }
     },
     "client_id": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "client_id which you acquired in previous step"
+      }
     },
     "client_secret": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "client_secret which you acquired in previous step"
+      }
     },
     "OriginEmailAddress": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "An approval email will be sent should you choose to explicitly perform database failover. The email will be send from this address."
+      }
     },
     "TargetEmailAddress": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "An approval email will be sent should you choose to explicitly perform database failover. The email will be send to this address."
+      }
     },
     "eventHubName": {
       "type": "string",
@@ -88,11 +103,17 @@
     },
     "trafficManagerName": {
       "defaultValue": "[toLower(concat('tm', uniqueString(resourceGroup().id)))]",
-      "type": "String"
+      "type": "String",
+      "metadata": {
+        "description": "The name of the Azure Traffic Manager."
+      }
     },
     "diagnosticLogName": {
       "defaultValue": "[toLower(concat('diag', uniqueString(resourceGroup().id)))]",
-      "type": "String"
+      "type": "String",
+      "metadata": {
+        "description": "The name of the Diagnostic Log configured in Traffic Manager."
+      }
     },
     "webAppName": {
       "type": "string",
@@ -103,7 +124,10 @@
     },
     "webAppProject": {
       "type": "string",
-      "defaultValue": "WebApiDrDemoCS"
+      "defaultValue": "WebApiDrDemoCS",
+      "metadata": {
+        "description": "The name of the project."
+      }
     },
     "sourceCodeRepositoryURL": {
       "type": "string",
@@ -178,11 +202,17 @@
     },
     "functionsAppProject": {
       "type": "string",
-      "defaultValue": "FunctionAppFailover"
+      "defaultValue": "FunctionAppFailover",
+      "metadata": {
+        "description": "The name of the Function App project."
+      }
     },
     "streamingjobs_tmstatus_stream_name": {
       "defaultValue": "[toLower(concat('tmstatus-stream', uniqueString(resourceGroup().id)))]",
-      "type": "String"
+      "type": "String",
+      "metadata": {
+        "description": "The name of the Stream Analytic streaming job."
+      }
     }
   },
   "variables": {
