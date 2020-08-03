@@ -38,21 +38,7 @@ Now, we are deploying all necessary resources with just one unified deployment t
 
 Click below button to automatically deploy your instances using Azure ARM Template:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
-
-New button
-
-<a href="https://azuredeploy.net/
-   repository=https://github.com/wely/fosampleaz"
-   target="_blank">
-   <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
-xxx
-<a href="https://azuredeploy.net/
-   repository=https://github.com/codePrincess/resizingService"
-   target="_blank">
-   <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%wely%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a> 
 Add those info / keys (**tenant_id, grant_type, client_id, client_secret**) that we got from ealier to your deployment paramter. They are primarily used as authorization keys to perform Database Failover programmatically thru our Azure Functions.
 
 Most of the parameters have been prefilled with the default values. You may optionally update them to your preferred values.
