@@ -47,7 +47,7 @@
         "Norway East"
       ],
       "metadata": {
-        "description": "Locations"
+        "description": "Secondary Region Location"
       }
     },
     "tenant_id": {
@@ -67,14 +67,14 @@
     },
     "eventHubName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('foevhub', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('evhub', uniqueString(resourceGroup().id)))]",
       "metadata": {
-        "description": "The name of the event hub."
+        "description": "The name of the Event Hubs."
       }
     },
     "eventHubNamespaceName": {
       "type": "string",
-      "defaultValue": "[concat('foevhubnamespace', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[concat('evhubns', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "The name of the Event Hubs namespace."
       }
@@ -83,22 +83,22 @@
       "type": "string",
       "defaultValue": "RootManageSharedAccessKey",
       "metadata": {
-        "description": "Name of Namespace Authorization Rule."
+        "description": "Name of Event Hubs Authorization Rule."
       }
     },
     "trafficManagerName": {
-      "defaultValue": "[toLower(concat('traffsasnfo', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('tm', uniqueString(resourceGroup().id)))]",
       "type": "String"
     },
     "diagnosticLogName": {
-      "defaultValue": "[toLower(concat('diagsnfosam', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('diag', uniqueString(resourceGroup().id)))]",
       "type": "String"
     },
     "webAppName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('snwebfosamid', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('web', uniqueString(resourceGroup().id)))]",
       "metadata": {
-        "description": "Relative DNS name for the WebApps, must be globally unique.  An index will be appended for each Web App."
+        "description": "Relative DNS name for the Web App, must be globally unique.  An unique string will be appended for each Web App."
       }
     },
     "webAppProject": {
@@ -109,56 +109,56 @@
       "type": "string",
       "defaultValue": "https://github.com/[your-github-username]/fosampleaz.git",
       "metadata": {
-        "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork. If you are using your own fork, you may see an error in deployment related to GitHub auth. We require this for your own good, as we may update and break your application or testing as we deploy new updates to the public samples repository."
+        "description": "Source code repository URL. Is is REQUIRED that you first fork the samples repository and point this to your fork."
       }
     },
     "sourceCodeBranch": {
       "type": "string",
       "defaultValue": "master",
       "metadata": {
-        "description": "Sourcecode Repo branch. This should be set to Master for the public sample. You can adjust this to point to your own fork branch as recommended"
+        "description": "Source code Repo branch. This should be set to Master for the public sample. You can adjust this to point to your own fork branch as recommended"
       }
     },
     "sqlServerPrimaryName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('primsofosamsn', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('sqlsvrprim', uniqueString(resourceGroup().id)))]",
       "metadata": {
         "description": "The name of the primary SQL Server."
       }
     },
     "sqlServerSecondaryName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('secosofosamsn', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('sqlsvrsec', uniqueString(resourceGroup().id)))]",
       "metadata": {
         "description": "The name of the secondary SQL Server."
       }
     },
     "sqlDatabaseName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('productdbfosam', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('productdb', uniqueString(resourceGroup().id)))]",
       "metadata": {
         "description": "The name of the database."
       }
     },
     "sqlServerAdminUsername": {
       "type": "string",
-      "defaultValue": "snfoadmin",
+      "defaultValue": "demouser",
       "metadata": {
-        "description": "The administrator username of the primary SQL Server."
+        "description": "The administrator username of the SQL Server."
       }
     },
     "sqlServerAdminPassword": {
       "type": "securestring",
-      "defaultValue": "Fomaster2020",
+      "defaultValue": "P@ssW0rd!",
       "metadata": {
-        "description": "The administrator password of the primary SQL Server."
+        "description": "The administrator password of the SQL Server."
       }
     },
     "sqlFailoverGroupName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('sofogrousnam', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('fogroup', uniqueString(resourceGroup().id)))]",
       "metadata": {
-        "description": "The name of the failover group."
+        "description": "The name of the SQL Server's failover group."
       }
     },
     "connections_office365_name": {
@@ -171,7 +171,7 @@
     },
     "functionsAppName": {
       "type": "string",
-      "defaultValue": "[toLower(concat('failoverfuncsample', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('failoverfunc', uniqueString(resourceGroup().id)))]",
       "metadata": {
         "description": "The name of the Function application to be deployed. The name will automatically be made unique on deployment, all lowercase letters or numbers with no spaces."
       }
@@ -181,7 +181,7 @@
       "defaultValue": "FunctionAppFailover"
     },
     "streamingjobs_tmstatus_stream_name": {
-      "defaultValue": "[toLower(concat('tmstatus-streamsnfo', uniqueString(resourceGroup().id)))]",
+      "defaultValue": "[toLower(concat('tmstatus-stream', uniqueString(resourceGroup().id)))]",
       "type": "String"
     }
   },
@@ -206,7 +206,7 @@
   "resources": [
     {
       "apiVersion": "2015-08-01",
-      "name": "[concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()])]",
+      "name": "[concat('AppSvcPlan', variables('webAppStage')[copyIndex()])]",
       "type": "Microsoft.Web/serverfarms",
       "copy": {
         "name": "farmloop",
@@ -228,10 +228,10 @@
       },
       "location": "[variables('webAppLocations')[copyIndex()]]",
       "dependsOn": [
-        "[concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()])]"
+        "[concat('AppSvcPlan', variables('webAppStage')[copyIndex()])]"
       ],
       "properties": {
-        "serverFarmId": "[concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()])]"
+        "serverFarmId": "[concat('AppSvcPlan', variables('webAppStage')[copyIndex()])]"
       },
       "resources": [
         {
@@ -240,7 +240,7 @@
           "apiVersion": "2015-08-01",
           "comments": "These are the default appsettings configured on the both web apps.",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/serverfarms', concat('DemoAppServicePlan', variables('webAppStage')[copyIndex()]))]",
+            "[resourceId('Microsoft.Web/serverfarms', concat('AppSvcPlan', variables('webAppStage')[copyIndex()]))]",
             "[resourceId('Microsoft.Web/Sites', concat(parameters('webAppName'), variables('webAppStage')[copyIndex()]))]"
           ],
           "properties": {
@@ -768,7 +768,7 @@
       "name": "[variables('functionsAppName')]",
       "apiVersion": "2015-08-01",
       "location": "[variables('webAppLocations')[0]]",
-      "comments": "This function app depends on the media services account and storage account and will pull down the source code from Github",
+      "comments": "This function app depends on the storage account and will pull down the source code from Github",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Web/serverfarms', variables('functionHostingPlanName'))]",
