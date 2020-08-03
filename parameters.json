@@ -1,0 +1,84 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "RegionSecondary": {
+      "value": null
+    },
+    "tenant_id": {
+      "value": null
+    },
+    "client_id": {
+      "value": null
+    },
+    "client_secret": {
+      "value": null
+    },
+    "OriginEmailAddress": {
+      "value": null
+    },
+    "TargetEmailAddress": {
+      "value": null
+    },
+    "eventHubName": {
+      "value": "[toLower(concat('foevhub', uniqueString(resourceGroup().id)))]"
+    },
+    "eventHubNamespaceName": {
+      "value": "[concat('foevhubnamespace', uniqueString(resourceGroup().id))]"
+    },
+    "eventhubAuthorizationRuleName": {
+      "value": "RootManageSharedAccessKey"
+    },
+    "trafficManagerName": {
+      "value": "[toLower(concat('traffsasnfo', uniqueString(resourceGroup().id)))]"
+    },
+    "diagnosticLogName": {
+      "value": "[toLower(concat('diagsnfosam', uniqueString(resourceGroup().id)))]"
+    },
+    "webAppName": {
+      "value": "[toLower(concat('snwebfosamid', uniqueString(resourceGroup().id)))]"
+    },
+    "webAppProject": {
+      "value": "WebApiDrDemoCS"
+    },
+    "sourceCodeRepositoryURL": {
+      "value": "https://github.com/[your-github-username]/fosampleaz.git"
+    },
+    "sourceCodeBranch": {
+      "value": "master"
+    },
+    "sqlServerPrimaryName": {
+      "value": "[toLower(concat('primsofosamsn', uniqueString(resourceGroup().id)))]"
+    },
+    "sqlServerSecondaryName": {
+      "value": "[toLower(concat('secosofosamsn', uniqueString(resourceGroup().id)))]"
+    },
+    "sqlDatabaseName": {
+      "value": "[toLower(concat('productdbfosam', uniqueString(resourceGroup().id)))]"
+    },
+    "sqlServerAdminUsername": {
+      "value": "snfoadmin"
+    },
+    "sqlServerAdminPassword": {
+      "value": "Fomaster2020"
+    },
+    "sqlFailoverGroupName": {
+      "value": "[toLower(concat('sofogrousnam', uniqueString(resourceGroup().id)))]"
+    },
+    "connections_office365_name": {
+      "value": "[toLower(concat('office365fosample', uniqueString(resourceGroup().id)))]"
+    },
+    "workflows_failoverflow_name": {
+      "value": "[toLower(concat('failoverflow', uniqueString(resourceGroup().id)))]"
+    },
+    "functionsAppName": {
+      "value": "[toLower(concat('failoverfuncsample', uniqueString(resourceGroup().id)))]"
+    },
+    "functionsAppProject": {
+      "value": "FunctionAppFailover"
+    },
+    "streamingjobs_tmstatus_stream_name": {
+      "value": "[toLower(concat('tmstatus-streamsnfo', uniqueString(resourceGroup().id)))]"
+    }
+  }
+}
