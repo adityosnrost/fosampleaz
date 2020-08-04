@@ -3,12 +3,16 @@
 This repository complements this [video series](https://www.youtube.com/playlist?list=PLe32w3jNLanrZ9_X58_3d13tQ5REMmnK3) where we demonstrated  how to perform a failover on Web App and Database in Azure when one of the region goes down.
 This solution uses a number of Azure services such as App Service, SQL Datbase, Traffic Manager, EventHub, Steam Analytics, Azure Function and Logic App.
 
+In case you missed the video series, here's the solution architecture:
+![Solution Architecture](images/solution-architecture.png)
+
 We aim to make this deployment and configuration process as simple as possible.
 
 This project contains:
 
 1. Source codes used in the demo which includes the [sample web api project](SourceCode/WebApiDrDemoCS/) built-with .NET and Visual Studio as well as [Azure Function project](SourceCode/FunctionAppFailover/).
 2. ARM Deployment template which you can easily deploy entire solution to Azure with just a SINGLE CLICK!
+3. [Slides](Slides/) that i presented in the video series
 
 <!-- # How to perform SINGLE CLICK deployment -->
 
