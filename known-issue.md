@@ -19,3 +19,6 @@ If this issue still persists after 10 mins, i'd recommend you to navigate to you
 We created a sample database table along with some dummy data as part of deployment template using Database Copy.
  
 In the even if you don't see the table created, please run the [following script](Deployment/fodbscript.sql) manually. 
+
+## Facing another issue that can't be solved? 
+Feel free to file a issue for this repo in GitHub.
