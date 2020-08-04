@@ -48,15 +48,16 @@ Click below button to automatically deploy your instances using Azure ARM Templa
 
 You will soon be routed to Azure Portal with custom deployment template creation wizard just like the following screen. 
 
-![Deployment Template](images/deployment template.png)
+![Deployment Template](images/deployment-template.png)
 
 Choose your existing resource group or create a new one. Then choose the **Region (primary) and the secondary region**. Enter **tenant_id, client_id, client_secret** that we got from ealier to your deployment paramter. They are primarily used as authorization keys to perform Database Failover programmatically thru our Azure Functions.
+
+**IMPORTANT**: On the "Source Code Repository URL", make sure you update **[your-github-username]** accordingly. 
 
 Most of the parameters have been prefilled with the default values. You may optionally update them to your preferred values. Make sure you read the description carefully.
 
 Click "**Next: Review + create >**" button for validation and finally "**Review + create**" to proceed.
 
-It typically takes about less than 15 minutes to deploy the solution. If you face any error such as Conflict, i suggest you to redeploy agian. If it's still doesn't help, feel free to raise a GitHub issue. 
 
 ## Post deployment configuration
 
@@ -64,6 +65,11 @@ As you notice that we try to simplify the deployment process as automated as pos
 ![Logicapp Email Auth](images/logicapp-email-auth.png)
 After deployment is successful, open your Azure portal, go to Logic App (it should be named with prefix of **failoverflow** by default. Click the Logic app designer, expand the "**Send an email (V2)**" step, click on the (!) and login with Office 365 account.
 
-## OTHER REMARKS 
+## KNOWN ISSUES 
 
+Please refer to the [known issues](../known-issue.md) doc in case you've encontered any issue.
+
+## You're all set
+
+Now you may start testing your failover the database or app. Refer to my [video #7](https://www.youtube.com/watch?v=phjIB4lp4DY) to perform failover to the secondary region.
 

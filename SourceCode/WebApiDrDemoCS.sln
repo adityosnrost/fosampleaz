@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC3BE3E0-7151-475C-9F4B-93494BF1D65D}"
 	ProjectSection(SolutionItems) = preProject
 		..\Deployment\azureDeployment.json = ..\Deployment\azureDeployment.json
+		known-issue.md = known-issue.md
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
