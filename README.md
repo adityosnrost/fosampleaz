@@ -28,7 +28,7 @@ Verify if you've ever done the integration in your subscription. You can go to t
 
 If you have never associated your GitHub account in the Azure portal before, please do it by referring to [this link](https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment#credentials) for instruction.
 
-## Getting ready your necessary keys and secrets
+### 4. Getting ready your necessary keys and secrets
 
 In this step, you need to create AAD (Azure Active Directory) App Client and Retreived the keys
 
