@@ -67,7 +67,7 @@ After deployment is successful, open your Azure portal, go to Logic App (it shou
 
 ## KNOWN ISSUES 
 
-Please refer to the [known issues](../known-issue.md) doc in case you've encontered any issue.
+Please refer to the [known issues](known-issue.md) doc in case you've encontered any issue.
 
 ## You're all set
 
