@@ -12,7 +12,7 @@ This project contains:
 
 1. Source codes used in the demo which includes the [sample web api project](SourceCode/WebApiDrDemoCS/) built-with .NET and Visual Studio as well as [Azure Function project](SourceCode/FunctionAppFailover/).
 2. ARM Deployment template which you can easily deploy entire solution to Azure with just a SINGLE CLICK!
-3. [Slides](Slides/) that i presented in the video series
+3. [Slides](slides/) that i presented in the video series
 
 <!-- # How to perform SINGLE CLICK deployment -->
 
