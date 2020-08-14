@@ -492,8 +492,6 @@
             "[parameters('sqlServerPrimaryName')]"
           ],
           "properties": {
-            "createMode": "Copy",
-            "sourceDatabaseId": "/subscriptions/86306f52-a93a-48f2-a3f2-d34b242a37c9/resourceGroups/rgDrDemo/providers/Microsoft.Sql/servers/productserversea/databases/productdb",
             "edition": "[variables('sqlDatabaseEdition')]",
             "requestedServiceObjectiveName": "[variables('sqlDatabaseServiceObjective')]"
           }
