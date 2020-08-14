@@ -3,8 +3,7 @@
     "",
     "\\Deployment",
     "\\SourceCode",
-    "\\SourceCode\\FunctionAppFailover",
-    "\\SourceCode\\WebApiDrDemoCS"
+    "\\SourceCode\\FunctionAppFailover"
   ],
   "SelectedNode": "\\SourceCode\\FunctionAppFailover\\AlertFailoverAction.cs",
   "PreviewInSolutionExplorer": false
