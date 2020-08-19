@@ -2,10 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Deployment",
-    "\\SourceCode",
+    "\\slides",
     "\\SourceCode\\FunctionAppFailover",
     "\\SourceCode\\WebApiDrDemoCS"
   ],
-  "SelectedNode": "\\SourceCode\\FunctionAppFailover\\AlertFailoverAction.cs",
+  "SelectedNode": "\\known-issue.md",
   "PreviewInSolutionExplorer": false
 }

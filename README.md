@@ -65,7 +65,12 @@ Click "**Next: Review + create >**" button for validation and finally "**Review 
 
 ## Post deployment configuration
 
-As you notice that we try to simplify the deployment process as automated as possible. However, there will be one step which we require you to perform manually, which is granting Logic App permission to send email thru your Office 365 account.
+As you notice that we try to simplify the deployment process as automated as possible. However, there will be one step which we require you to perform manually:
+
+1. 
+
+
+2. Granting Logic App permission to send email thru your Office 365 account.
 ![Logicapp Email Auth](images/logicapp-email-auth.png)
 After deployment is successful, open your Azure portal, go to Logic App (it should be named with prefix of **failoverflow** by default. Click the Logic app designer, expand the "**Send an email (V2)**" step, click on the (!) and login with Office 365 account.
 
