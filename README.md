@@ -48,7 +48,7 @@ Now, we are deploying all necessary resources with just one unified deployment t
 
 Click below button to automatically deploy your instances using Azure ARM Template:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fwely%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
 You will soon be routed to Azure Portal with custom deployment template creation wizard just like the following screen. 
 
