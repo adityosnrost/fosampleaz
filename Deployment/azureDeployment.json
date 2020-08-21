@@ -392,7 +392,7 @@
           "path": "/",
           "intervalInSeconds": 10,
           "timeoutInSeconds": 5,
-          "toleratedNumberOfFailures": 6
+          "toleratedNumberOfFailures": 3
         }
       }
     },
