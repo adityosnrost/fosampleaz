@@ -48,7 +48,7 @@ Now, we are deploying all necessary resources with just one unified deployment t
 
 Click below button to automatically deploy your instances using Azure ARM Template:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fadityosnrost%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fwely%2Ffosampleaz%2Fmaster%2FDeployment%2FazureDeployment.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
 
 You will soon be routed to Azure Portal with custom deployment template creation wizard just like the following screen. 
 
@@ -65,9 +65,25 @@ Click "**Next: Review + create >**" button for validation and finally "**Review 
 
 ## Post deployment configuration
 
-As you notice that we try to simplify the deployment process as automated as possible. However, there will be one step which we require you to perform manually, which is granting Logic App permission to send email thru your Office 365 account.
+As you notice that we try to simplify the deployment process as automated as possible. However, there will be one step which we require you to perform manually:
+
+### 1. Load the database with sample table and data.
+
+We have provided the sample .sql file [here](Deployment/fodbscript.sql).
+You can either your SQL Server Management Studio or [Query Editor (in Azure Portal)](https://docs.microsoft.com/en-us/azure/azure-sql/database/connect-query-portal) to execute the SQL file as can be seen in the diagram.
+![Query Editor Portal](images/query-editor-portal.png)
+
+**You might need to explicitly [allow your client ip address on the SQL Server firewall.](https://docs.microsoft.com/en-us/azure/azure-sql/database/firewall-create-server-level-portal-quickstart)**
+
+### 2. Granting Logic App permission to send email thru your Office 365 account.
 ![Logicapp Email Auth](images/logicapp-email-auth.png)
 After deployment is successful, open your Azure portal, go to Logic App (it should be named with prefix of **failoverflow** by default. Click the Logic app designer, expand the "**Send an email (V2)**" step, click on the (!) and login with Office 365 account.
+
+## Verification
+The first step of verification is to invoke the Traffic Manager endpoint by appending /api/order. 
+![Verification Tm Url](images/verification-tm-url.png)
+
+Notice that the HTTP Headers indicates that the request was served by Web and DB both from the primary region. 
 
 ## KNOWN ISSUES 
 
